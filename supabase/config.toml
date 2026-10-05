@@ -1,0 +1,71 @@
+# Configuration Supabase CLI — AgriFlow RDC.
+#
+# `project_id` est le NOM LOCAL du projet pour `supabase start` (conteneurs Docker). Ce n'est PAS la référence d'un projet
+# distant : celle-ci n'est volontairement écrite nulle part dans le dépôt, elle se définit avec `supabase link --project-ref <ref>`
+# (voir docs/DEPLOYMENT.md). Aucune clé, aucun secret ici.
+project_id = "agriflow-rdc"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+# En production, ces valeurs se règlent dans le dashboard Supabase (Authentication → URL Configuration) :
+# Site URL = URL publique du frontend ; Redirect URLs = cette même URL (+ /login).
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173/login"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+enable_signup = true
+minimum_password_length = 8
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+# À mettre à true quand le fournisseur SMTP de production est configuré : un compte non confirmé ne doit pas pouvoir commander.
+enable_confirmations = false
+
+[storage]
+enabled = true
+file_size_limit = "5MiB"
+
+[storage.buckets.avatars]
+public = true
+file_size_limit = "5MiB"
+allowed_mime_types = ["image/jpeg", "image/png", "image/webp"]
+
+[storage.buckets.product-images]
+public = true
+file_size_limit = "5MiB"
+allowed_mime_types = ["image/jpeg", "image/png", "image/webp"]
+
+# --- Edge Functions -------------------------------------------------------------------------------------------------
+# Le webhook CinetPay et le cron sont appelés par des serveurs (sans jeton utilisateur) : la vérification JWT de la
+# plateforme est désactivée ; ils s'authentifient eux-mêmes (signature HMAC + revérification CinetPay / x-cron-secret).
+# Les fonctions appelées par le navigateur gardent la vérification JWT activée.
+[functions.payment-initiate]
+verify_jwt = true
+
+[functions.payment-verify]
+verify_jwt = true
+
+[functions.payment-refund]
+verify_jwt = true
+
+[functions.payment-webhook]
+verify_jwt = false
+
+[functions.order-confirmation-cron]
+verify_jwt = false

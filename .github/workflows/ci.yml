@@ -1,0 +1,99 @@
+# Intégration continue AgriFlow RDC. Ne déploie RIEN : le déploiement Render est déclenché seulement quand ces checks passent
+# (render.yaml : autoDeployTrigger: checksPass). Les secrets de production n'existent jamais dans ce workflow.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Typecheck, lint, tests unitaires, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run typecheck:edge
+      - run: npm run lint
+      - run: npm test
+      - run: npm run db:check
+      - name: "Build (valeurs PUBLIQUES factices — le build ne contacte aucun service)"
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: https://ci.example.supabase.co
+          VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiJ9.c2lnbmF0dXJlc2lnbmF0dXJl
+      - name: Aucun secret dans le bundle publié
+        # Formes RÉELLES de secrets (pas de simples noms : le code public contient la garde « service_role » de src/lib/env.ts) :
+        # JWT dont le payload déclare le rôle service_role, clé « sb_secret_ », en-tête x-cron-secret, lecture de la clé côté serveur.
+        run: |
+          if grep -rEl "eyJyb2xlIjoic2VydmljZV9yb2xl|sb_secret_|x-cron-secret|SUPABASE_SERVICE_ROLE_KEY" dist/ ; then echo "Un secret semble présent dans dist/"; exit 1; fi
+
+  sql:
+    name: Migrations depuis une base vierge + tests SQL (RLS, paiement, concurrence)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Outils client PostgreSQL
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client bc
+      - name: Migrations + tests (échoue à la première erreur)
+        run: bash supabase/tests/run-all.sh
+
+  e2e:
+    name: E2E Playwright (staging, optionnel)
+    # Ne tourne que si un staging est configuré (variable de dépôt E2E_BASE_URL). Jamais contre la production.
+    if: ${{ vars.E2E_BASE_URL != '' }}
+    needs: [web]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      E2E_BASE_URL: ${{ vars.E2E_BASE_URL }}
+      E2E_FORBIDDEN_HOSTS: ${{ vars.E2E_FORBIDDEN_HOSTS }}
+      E2E_ALLOW_WRITES: ${{ vars.E2E_ALLOW_WRITES }}
+      E2E_BUYER_EMAIL: ${{ secrets.E2E_BUYER_EMAIL }}
+      E2E_BUYER_PASSWORD: ${{ secrets.E2E_BUYER_PASSWORD }}
+      E2E_PRODUCER_EMAIL: ${{ secrets.E2E_PRODUCER_EMAIL }}
+      E2E_PRODUCER_PASSWORD: ${{ secrets.E2E_PRODUCER_PASSWORD }}
+      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/

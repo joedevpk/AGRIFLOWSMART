@@ -1,0 +1,69 @@
+# AgriFlow RDC — hébergement Render (Static Site).
+# Blueprint : Render → New → Blueprint → choisir ce dépôt. Les valeurs sensibles ne sont JAMAIS dans ce fichier.
+# Seules des variables PUBLIQUES (VITE_*) sont nécessaires : elles sont lues au BUILD et embarquées dans le JavaScript.
+# Les secrets (CinetPay, service_role, CRON_SECRET, Resend) se configurent dans Supabase (`supabase secrets set`), pas ici.
+services:
+  - type: web
+    runtime: static
+    name: agriflow-rdc
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    # Déploiement automatique SEULEMENT si les checks GitHub passent (voir .github/workflows/ci.yml).
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: VITE_SUPABASE_URL
+        sync: false          # à saisir dans le dashboard Render (URL publique du projet Supabase)
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false          # clé « anon » publique — JAMAIS la clé service_role
+      - key: VITE_CONTACT_EMAIL
+        sync: false
+      - key: VITE_CONTACT_PHONE
+        sync: false
+      - key: VITE_CONTACT_WHATSAPP
+        sync: false
+      - key: VITE_CONTACT_ADDRESS
+        sync: false
+
+    # React Router : toute URL inconnue du système de fichiers renvoie l'application (les fichiers existants restent servis tels quels).
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+    headers:
+      # ---- Sécurité (toutes les pages)
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), payment=(), geolocation=(self)
+      - path: /*
+        name: Strict-Transport-Security
+        value: max-age=31536000
+      # CSP en mode OBSERVATION (Report-Only) : n'empêche rien. NON TESTÉE dans un navigateur — voir docs/DEPLOYMENT.md
+      # § « Activer la CSP » avant de la passer en `Content-Security-Policy`.
+      - path: /*
+        name: Content-Security-Policy-Report-Only
+        value: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+      # ---- Cache : le HTML et le service worker ne doivent JAMAIS rester en cache ; les fichiers hachés de Vite, si.
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache, max-age=0, must-revalidate
+      - path: /favicon.svg
+        name: Cache-Control
+        value: public, max-age=86400

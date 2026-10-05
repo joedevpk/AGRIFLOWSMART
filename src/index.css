@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-cream text-charcoal font-sans antialiased transition-colors duration-200 dark:bg-night-900 dark:text-cream;
+  }
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: rgba(252, 252, 248, 0.78);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .glass-dark {
+    background: rgba(13, 36, 21, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  /* Puce de catégorie / filtre horizontal scrollable */
+  .chip {
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors;
+  }
+  .chip-active {
+    @apply bg-brand-600 text-white border-brand-600;
+  }
+  .chip-idle {
+    @apply bg-offwhite text-charcoal/70 border-black/[0.06] hover:border-brand-300 hover:text-brand-700;
+  }
+  /* Badge flottant sur les visuels du hero */
+  .floating-badge {
+    @apply flex items-center gap-2 rounded-2xl bg-offwhite/95 px-3.5 py-2.5 shadow-lift backdrop-blur-sm;
+  }
+  /* Safe-area pour la bottom navigation mobile */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Couverture globale du mode sombre                                  */
+/*  De nombreux écrans utilisent encore la palette gray-* de Tailwind. */
+/*  Ces overrides leur donnent un rendu sombre cohérent sans devoir     */
+/*  réécrire chaque page une par une.                                  */
+/* ------------------------------------------------------------------ */
+.dark { color-scheme: dark; }
+
+.dark .bg-white { @apply bg-night-800; }
+.dark .bg-offwhite { @apply bg-night-800; }
+.dark .bg-cream { @apply bg-night-900; }
+.dark .bg-charcoal { @apply bg-night-900; }
+.dark .bg-sage\/60 { background-color: rgba(168,198,159,0.08); }
+.dark .shadow-card { box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 12px 28px -14px rgba(0,0,0,0.6); }
+.dark .bg-gray-50 { @apply bg-white/[0.04]; }
+.dark .bg-gray-100 { @apply bg-white/[0.07]; }
+
+.dark .text-gray-900 { @apply text-cream; }
+.dark .text-gray-800 { @apply text-cream/90; }
+.dark .text-gray-700 { @apply text-cream/80; }
+.dark .text-gray-600 { @apply text-cream/65; }
+.dark .text-gray-500 { @apply text-cream/50; }
+.dark .text-gray-400 { @apply text-cream/40; }
+.dark .text-charcoal { @apply text-cream; }
+
+.dark .border-gray-200 { @apply border-white/10; }
+.dark .border-gray-100 { @apply border-white/10; }
+.dark .border-gray-200\/80 { border-color: rgba(255,255,255,0.1); }
+.dark .border-gray-200\/60 { border-color: rgba(255,255,255,0.1); }
+.dark .border-black\/\[0\.06\] { border-color: rgba(255,255,255,0.1); }
+
+.dark .hover\:bg-gray-50:hover { background-color: rgba(255,255,255,0.06); }
+.dark .hover\:bg-gray-100:hover { background-color: rgba(255,255,255,0.08); }
+.dark .hover\:bg-white:hover { background-color: rgba(255,255,255,0.06); }
+
+/* Texte à opacité (text-charcoal/N) : sinon sombre sur fond sombre */
+.dark .text-charcoal\/30 { color: rgba(245,240,230,0.42); }
+.dark .text-charcoal\/35 { color: rgba(245,240,230,0.47); }
+.dark .text-charcoal\/40 { color: rgba(245,240,230,0.52); }
+.dark .text-charcoal\/45 { color: rgba(245,240,230,0.57); }
+.dark .text-charcoal\/50 { color: rgba(245,240,230,0.62); }
+.dark .text-charcoal\/55 { color: rgba(245,240,230,0.67); }
+.dark .text-charcoal\/60 { color: rgba(245,240,230,0.72); }
+.dark .text-charcoal\/65 { color: rgba(245,240,230,0.77); }
+.dark .text-charcoal\/70 { color: rgba(245,240,230,0.82); }
+.dark .text-charcoal\/80 { color: rgba(245,240,230,0.92); }
+.dark .placeholder\:text-charcoal\/35::placeholder { color: rgba(245,240,230,0.4); }
+.dark .border-black\/\[0\.08\] { border-color: rgba(255,255,255,0.12); }
+/* Badges flottants du hero : fond clair conservé, texte foncé conservé */
+.dark .floating-badge { background-color: rgba(252,251,247,0.96); }
+.dark .floating-badge .text-charcoal { color: #20251F; }
+.dark .floating-badge [class*="text-charcoal/"] { color: rgba(32,37,31,0.55); }
+
+/* Mode sombre : les photos restent naturelles (léger adoucissement seulement) */
+.dark img { filter: brightness(0.94); }
+
+/* Accessibilité : focus clavier visible + respect de prefers-reduced-motion */
+:focus-visible { outline: 2px solid #5E9F45; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Textes longs (pages juridiques) : confort de lecture               */
+/* ------------------------------------------------------------------ */
+@layer components {
+  /* Règles limitées aux ENFANTS DIRECTS du texte : les composants imbriqués (cartes, interrupteurs,
+     contacts) ne sont ainsi jamais affectés (pas de puces ni de marges parasites). */
+  .legal-prose { @apply max-w-[70ch] text-[15px] leading-[1.75] text-charcoal/80 sm:text-base sm:leading-[1.8]; }
+  .legal-prose > * + * { @apply mt-4; }
+  .legal-prose > h3 { @apply mt-8 text-base font-semibold text-charcoal sm:text-lg; }
+  .legal-prose > ul { @apply list-disc space-y-1.5 pl-5 marker:text-brand-500; }
+  .legal-prose > ol { @apply list-decimal space-y-1.5 pl-5 marker:font-semibold marker:text-brand-600; }
+  .legal-prose > p a, .legal-prose > ul > li a, .legal-prose > ol > li a, .legal-note a { @apply font-medium text-brand-700 underline underline-offset-2 hover:text-brand-800; }
+  .legal-prose > p strong, .legal-prose > ul > li strong, .legal-prose > ol > li strong { @apply font-semibold text-charcoal; }
+  .legal-prose > p code, .legal-prose > ul > li code, .legal-prose > ol > li code { @apply break-words rounded bg-brand-50 px-1.5 py-0.5 text-[0.85em] text-brand-900; }
+  /* Encadrés TODO / À configurer : fond clair dans les deux thèmes, texte hérité (jamais forcé en clair). */
+  .legal-note code { @apply break-words rounded bg-black/5 px-1 py-0.5 text-[0.9em]; }
+}
+.dark .legal-prose { color: rgba(245,240,230,0.85); }
+.dark .legal-prose > h3, .dark .legal-prose > p strong, .dark .legal-prose > ul > li strong, .dark .legal-prose > ol > li strong { color: #F5F0E6; }
+.dark .legal-prose > p a, .dark .legal-prose > ul > li a, .dark .legal-prose > ol > li a { color: #A8C69F; }
+.dark .legal-prose > p code, .dark .legal-prose > ul > li code, .dark .legal-prose > ol > li code { background-color: rgba(255,255,255,0.08); color: #F5F0E6; }

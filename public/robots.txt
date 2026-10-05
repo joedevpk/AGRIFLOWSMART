@@ -1,0 +1,23 @@
+# AgriFlow RDC — pages publiques indexables ; espaces privés exclus (ils sont aussi en <meta robots noindex>).
+User-agent: *
+Disallow: /admin
+Disallow: /producer/products
+Disallow: /producer/orders
+Disallow: /producer/sales
+Disallow: /producer/requests
+Disallow: /buyer/
+Disallow: /dashboard
+Disallow: /plots
+Disallow: /payments
+Disallow: /deliveries
+Disallow: /favorites
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders
+Disallow: /payment
+Disallow: /messages
+Disallow: /notifications
+Disallow: /profile
+Disallow: /login
+Disallow: /register
+Allow: /
