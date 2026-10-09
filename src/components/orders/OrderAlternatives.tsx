@@ -51,7 +51,7 @@ export function OrderAlternatives({ orderId, onLoaded }: { orderId: string; onLo
       ) : (
         <>
           <p className="mt-1 text-sm text-charcoal/70">{t('alt.found')} {t('alt.noAuto')}</p>
-          <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+          <ul className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {items.map((a) => <AlternativeCard key={a.product_id} item={a} />)}
           </ul>
         </>

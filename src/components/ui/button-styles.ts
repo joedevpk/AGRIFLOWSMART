@@ -14,7 +14,7 @@ export const buttonVariantClasses: Record<ButtonVariant, string> = {
 };
 
 export const buttonSizeClasses: Record<ButtonSize, string> = {
-  sm: 'min-h-[36px] px-3 py-1.5 text-sm rounded-lg gap-1.5',
+  sm: 'min-h-[36px] [@media(pointer:coarse)]:min-h-[44px] px-3 py-1.5 text-sm rounded-lg gap-1.5',
   md: 'min-h-[44px] px-4 py-2.5 text-sm rounded-xl gap-2',
   lg: 'min-h-[48px] px-6 py-3 text-base rounded-xl gap-2',
   xl: 'min-h-[56px] px-8 py-4 text-lg rounded-xl gap-2.5',

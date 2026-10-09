@@ -139,7 +139,7 @@ export function ProducerProfilePage() {
               </div>
             </div>
 
-            <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_280px]">
+            <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
               <div>
                 <h2 className="mb-2 text-sm font-bold uppercase tracking-wider text-charcoal/40">Présentation</h2>
                 {profile.bio ? (

@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   LayoutDashboard, Package, Store, ShoppingBag, Inbox, MessageSquare, CreditCard, Truck, Bell,
-  User, MapPin, BookOpen, CalendarDays, Sparkles, ShoppingCart, LineChart, LifeBuoy, Mail, Heart,
+  User, MapPin, BookOpen, CalendarDays, Sparkles, ShoppingCart, LineChart, LifeBuoy, Mail, Heart, ShieldCheck,
 } from 'lucide-react';
 import type { UserRole } from '@/types';
 
@@ -57,6 +57,7 @@ export const PRODUCER_NAV: NavSection[] = [
     items: [
       { label: 'Agri-Match · demandes', path: '/producer/requests', icon: Sparkles },
       { label: 'Marketplace', path: '/marketplace', icon: Store },
+      { label: 'Favoris', path: '/favorites', icon: Heart },
     ],
   },
   {
@@ -96,7 +97,13 @@ export const BUYER_NAV: NavSection[] = [
   help,
 ];
 
+export const ADMIN_NAV: NavSection[] = [
+  { title: 'Administration', items: [{ label: 'Administration', path: '/admin', icon: ShieldCheck }] },
+  ...PRODUCER_NAV,
+];
+
 export function navFor(role: UserRole | undefined): NavSection[] {
+  if (role === 'admin') return ADMIN_NAV;
   return role === 'buyer' ? BUYER_NAV : PRODUCER_NAV;
 }
 

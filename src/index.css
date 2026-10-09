@@ -5,6 +5,12 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Hauteur de la navigation basse mobile (hors zone sûre) : source unique pour tous les éléments fixes. */
+    --bottom-nav-h: 3.5rem;
+  }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: 5rem; }
+  a, button, [role='button'], summary, label, select { touch-action: manipulation; }
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -55,6 +61,37 @@
   /* Safe-area pour la bottom navigation mobile */
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  /* Réserve d'espace sous le contenu pour la navigation basse (visible sous 768 px, comme BottomNav). */
+  .pb-nav {
+    padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
+  }
+  /* Hauteurs en dvh (barres d'adresse / clavier iOS), avec repli vh pour les navigateurs plus anciens. */
+  .h-chat {
+    height: calc(100vh - 12rem);
+    height: calc(100dvh - 12rem);
+  }
+  .max-h-sheet {
+    max-height: 90vh;
+    max-height: 90dvh;
+  }
+  /* Élément fixe posé juste au-dessus de la navigation basse (et en bas d'écran quand elle est masquée). */
+  .bottom-above-nav {
+    bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
+  }
+  @media (min-width: 768px) {
+    .pb-nav { padding-bottom: 0; }
+    .bottom-above-nav { bottom: 0; }
+  }
+}
+
+/* iOS Safari zoome la page dès qu'un champ a une police < 16 px : sur écran tactile, 16 px minimum.
+   Règle hors @layer pour l'emporter sur les classes text-sm des composants. */
+@media (pointer: coarse) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']):not([type='color']),
+  select,
+  textarea {
+    font-size: 16px;
   }
 }
 
@@ -162,3 +199,30 @@
 .dark .legal-prose > h3, .dark .legal-prose > p strong, .dark .legal-prose > ul > li strong, .dark .legal-prose > ol > li strong { color: #F5F0E6; }
 .dark .legal-prose > p a, .dark .legal-prose > ul > li a, .dark .legal-prose > ol > li a { color: #A8C69F; }
 .dark .legal-prose > p code, .dark .legal-prose > ul > li code, .dark .legal-prose > ol > li code { background-color: rgba(255,255,255,0.08); color: #F5F0E6; }
+
+/* ------------------------------------------------------------------ */
+/*  Cœur de favoris : pulsation + anneau + petits cœurs (0,4–0,6 s)    */
+/*  Uniquement transform/opacity (aucun décalage de mise en page).     */
+/* ------------------------------------------------------------------ */
+@keyframes fav-pop {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.35); }
+  65% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+@keyframes fav-ring {
+  0% { transform: scale(0.4); opacity: 0.55; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+@keyframes fav-particle {
+  0% { transform: translate(0, 0) scale(0.4); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translate(var(--fav-dx), var(--fav-dy)) scale(1); opacity: 0; }
+}
+.fav-pop { animation: fav-pop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.fav-ring { animation: fav-ring 0.45s ease-out forwards; }
+.fav-particle { animation: fav-particle 0.6s ease-out forwards; }
+@media (prefers-reduced-motion: reduce) {
+  .fav-pop { animation: none; }
+  .fav-ring, .fav-particle { display: none; }
+}

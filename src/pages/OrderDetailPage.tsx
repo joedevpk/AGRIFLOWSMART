@@ -208,7 +208,7 @@ export function OrderDetailPage() {
         {/* Que se passe-t-il ? Pourquoi ? Que faire ? (confirmation du producteur, expiration, remboursement, alternatives) */}
         <ConfirmationNotice order={order} viewer={role} />
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
             {/* Produits */}
             <Card>

@@ -75,7 +75,7 @@ export function CartPage() {
             {checking ? (
               <CartSkeleton />
             ) : (
-              <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
                 <section aria-label="Produits du panier" className="space-y-3">
                   {totals.mixedCurrencies && (
                     <div role="alert" className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
@@ -92,6 +92,17 @@ export function CartPage() {
                     />
                   ))}
                 </section>
+
+                {/* Mobile / tablette : récapitulatif complet (sous-total, livraison, total) sous la liste */}
+                <Card className="lg:hidden">
+                  <CardBody className="space-y-3">
+                    <h2 className="text-base font-bold text-charcoal">Récapitulatif</h2>
+                    <PriceSummary totals={totals} />
+                    {totals.hasBlockingIssue && (
+                      <p className="text-xs text-rose-600" role="status">Corrigez les produits signalés pour continuer.</p>
+                    )}
+                  </CardBody>
+                </Card>
 
                 <aside className="hidden lg:block">
                   <Card className="sticky top-24">
@@ -129,7 +140,7 @@ export function CartPage() {
 
       {/* Barre d'action mobile, au-dessus de la navigation basse */}
       {count > 0 && !checking && (
-        <div className="fixed inset-x-0 bottom-16 z-30 border-t border-black/[0.06] bg-offwhite/95 px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] backdrop-blur-sm lg:hidden">
+        <div className="fixed inset-x-0 bottom-above-nav z-30 border-t border-black/[0.06] bg-offwhite/95 px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] backdrop-blur-sm lg:hidden">
           <div className="flex items-center gap-3">
             <div className="min-w-0 flex-1">
               <p className="text-[11px] leading-tight text-charcoal/50">Total</p>

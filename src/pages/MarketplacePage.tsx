@@ -10,7 +10,6 @@ import { ErrorState } from '@/components/ui/States';
 import { EmptyMarketplace, MarketplaceSkeleton } from '@/components/marketplace/MarketplaceStates';
 import { Chip, FilterGroups, FilterSheet } from '@/components/marketplace/MarketplaceFilters';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
-import { useFavorites } from '@/hooks/useFavorites';
 import { fetchMarketplacePage } from '@/lib/marketplace-query';
 import { PAGE_SIZE } from '@/lib/pagination';
 import { reportError } from '@/lib/logger';
@@ -24,7 +23,6 @@ import {
 import { cn } from '@/lib/utils';
 
 export function MarketplacePage() {
-  const favorites = useFavorites();
   useSeo({
     title: 'Marketplace agricole RDC | AgriFlow',
     description: 'Parcourez les productions agricoles proposées directement par les producteurs et coopératives de RDC : maïs, manioc, riz, légumes et plus.',
@@ -165,11 +163,11 @@ export function MarketplacePage() {
         </div>
 
         {/* Barre d'outils */}
-        <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
           <p className="text-sm text-charcoal/55" aria-live="polite">
             {loading ? 'Chargement…' : (() => { const n = total ?? results.length; return `${n} production${n > 1 ? 's' : ''} disponible${n > 1 ? 's' : ''}`; })()}
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 max-w-full items-center gap-2">
             <button
               type="button"
               onClick={() => setSheetOpen(true)}
@@ -178,13 +176,13 @@ export function MarketplacePage() {
               <SlidersHorizontal className="h-4 w-4" /> Filtres
               {advancedCount > 0 && <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-400 px-1 text-xs font-bold text-charcoal">{advancedCount}</span>}
             </button>
-            <label className="flex items-center gap-2 text-sm text-charcoal/60">
+            <label className="flex min-w-0 items-center gap-2 text-sm text-charcoal/60">
               <span className="sr-only sm:not-sr-only">Trier par</span>
               <select
                 value={filters.sort}
                 onChange={(e) => updateParams({ sort: e.target.value })}
                 aria-label="Trier les produits"
-                className="min-h-[40px] rounded-full border border-black/[0.08] bg-offwhite px-3 text-sm font-medium text-charcoal focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/10 dark:border-white/10"
+                className="min-h-[40px] min-w-0 max-w-full rounded-full border border-black/[0.08] bg-offwhite px-3 text-sm font-medium text-charcoal focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/10 dark:border-white/10"
               >
                 {SORT_OPTIONS.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
               </select>
@@ -246,7 +244,7 @@ export function MarketplacePage() {
                   : 'grid grid-cols-1 gap-3',
               )}>
                 {results.map((product) => (
-                  <ProductCard key={product.id} product={product} view={view} favorite={{ active: favorites.has(product.id), busy: favorites.busy.has(product.id), onToggle: () => void favorites.toggle(product.id) }} />
+                  <ProductCard key={product.id} product={product} view={view} />
                 ))}
               </div>
             )}

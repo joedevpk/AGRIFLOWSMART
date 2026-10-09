@@ -243,7 +243,7 @@ export function LandingPage() {
       {/* Marketplace features */}
       <section className="py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <Badge variant="brand" className="mb-4">Marketplace</Badge>
               <h2 className="text-3xl sm:text-4xl font-bold text-charcoal tracking-tight">
@@ -253,7 +253,7 @@ export function LandingPage() {
                 Chaque production indique sa localisation, sa disponibilité, sa quantité et son prix.
                 Les acheteurs commandent directement, les producteurs vendent sans intermédiaire.
               </p>
-              <div className="mt-8 grid sm:grid-cols-2 gap-4">
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   { icon: <MapPin className="h-5 w-5" />, label: 'Localisation précise' },
                   { icon: <PackageCheck className="h-5 w-5" />, label: 'Disponibilité indiquée par le producteur' },
@@ -333,19 +333,19 @@ export function LandingPage() {
               Restaurants, marchés, grossistes, agro-industries : accédez directement aux producteurs.
             </p>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 min-[400px]:grid-cols-2 lg:grid-cols-4">
             {[
               { icon: <Store className="h-7 w-7" />, label: 'Restaurants', desc: 'Approvisionnez votre cuisine' },
               { icon: <ShoppingBag className="h-7 w-7" />, label: 'Marchés', desc: 'Diversifiez vos étals' },
               { icon: <Factory className="h-7 w-7" />, label: 'Grossistes', desc: 'Achetez en grande quantité' },
               { icon: <Building2 className="h-7 w-7" />, label: 'Agro-industries', desc: 'Sécurisez vos approvisionnements' },
             ].map((buyer) => (
-              <div key={buyer.label} className="group rounded-2xl border border-black/[0.06] bg-offwhite p-6 shadow-card transition-all hover:shadow-card-hover hover:border-brand-200">
+              <div key={buyer.label} className="group min-w-0 rounded-2xl border border-black/[0.06] bg-offwhite p-5 shadow-card transition-all hover:shadow-card-hover hover:border-brand-200 sm:p-6">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 mb-4 transition-colors group-hover:bg-brand-500 group-hover:text-white">
                   {buyer.icon}
                 </div>
-                <h3 className="text-base font-semibold text-charcoal">{buyer.label}</h3>
-                <p className="mt-1 text-sm text-charcoal/50">{buyer.desc}</p>
+                <h3 className="break-words text-base font-semibold text-charcoal">{buyer.label}</h3>
+                <p className="mt-1 break-words text-sm text-charcoal/50">{buyer.desc}</p>
               </div>
             ))}
           </div>
@@ -374,7 +374,7 @@ export function LandingPage() {
           </div>
           <div className="max-w-4xl mx-auto">
             <div className="rounded-3xl border border-black/[0.06] bg-offwhite shadow-card-hover overflow-hidden">
-              <div className="grid md:grid-cols-5">
+              <div className="grid grid-cols-1 md:grid-cols-5">
                 <div className="md:col-span-2 bg-gradient-to-br from-brand-600 to-brand-800 p-8 text-white">
                   <p className="text-sm text-brand-100 mb-2">Demande</p>
                   <p className="text-2xl font-bold mb-4">500 kg de maïs</p>

@@ -213,7 +213,7 @@ export function AdminPage() {
               <p className="text-sm text-charcoal/60">
                 Ces conseils s'ajoutent aux fiches culture d'AgriGuide sans modifier les étapes de base. Seuls les conseils publiés sont visibles par les producteurs.
               </p>
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <Select label="Culture" options={CROPS.map((c) => ({ value: c.id, label: c.name }))} value={tipCrop} onChange={(e) => setTipCrop(e.target.value)} />
                 <Input label="Titre" value={tipTitle} onChange={(e) => setTipTitle(e.target.value)} placeholder="Ex. Attention aux excès d'eau" className="sm:col-span-2" />
               </div>

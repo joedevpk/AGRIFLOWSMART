@@ -64,6 +64,19 @@ export function HomeHeader({ variant = 'overlay' }: HomeHeaderProps = {}) {
     { label: 'Centre d\'aide', path: '/help' },
     { label: 'Contact', path: '/contact' },
   ];
+  // Raccourcis du compte, uniquement dans le tiroir : sans eux, un utilisateur connecté sur tablette
+  // (nav basse masquée dès 768 px, menu compte réservé aux écrans >= 1280 px) n'atteint ni son profil ni ses commandes.
+  const accountLinks = user
+    ? [
+        { label: 'Mon profil', path: '/profile' },
+        { label: 'Mes commandes', path: profile?.role === 'buyer' ? '/buyer/orders' : '/producer/orders' },
+        { label: 'Messages', path: '/messages' },
+        { label: 'Paiements', path: '/payments' },
+        { label: 'Livraisons', path: '/deliveries' },
+        { label: 'Favoris', path: '/favorites' },
+        ...(profile?.role === 'admin' ? [{ label: 'Administration', path: '/admin' }] : []),
+      ]
+    : [];
   // Un acheteur ne publie pas d'offre (SellerRoute) : on ne lui propose pas ce CTA.
   const showSellCta = profile?.role !== 'buyer';
 
@@ -119,7 +132,7 @@ export function HomeHeader({ variant = 'overlay' }: HomeHeaderProps = {}) {
     navigate(q ? `/marketplace?q=${encodeURIComponent(q)}` : '/marketplace');
   };
 
-  const iconBtn = 'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white/90 transition-colors duration-200 hover:bg-white/10 hover:text-white';
+  const iconBtn = 'flex h-11 w-11 max-[359px]:w-9 shrink-0 items-center justify-center rounded-xl text-white/90 transition-colors duration-200 hover:bg-white/10 hover:text-white';
 
   return (
     <>
@@ -306,7 +319,7 @@ export function HomeHeader({ variant = 'overlay' }: HomeHeaderProps = {}) {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t('search.placeholder')}
                 aria-label={t('nav.search')}
-                className="h-12 w-full rounded-xl border-0 bg-offwhite pl-12 pr-4 text-sm text-charcoal placeholder:text-charcoal/40 focus:outline-none focus:ring-4 focus:ring-accent-400/30"
+                className="h-12 w-full rounded-xl border-0 bg-offwhite pl-12 pr-4 text-base text-charcoal sm:text-sm placeholder:text-charcoal/40 focus:outline-none focus:ring-4 focus:ring-accent-400/30"
               />
             </div>
             <button type="submit" className={buttonStyles({ variant: 'sun', size: 'lg', className: 'h-12 shrink-0 px-4 font-semibold sm:px-6' })}>
@@ -365,6 +378,25 @@ export function HomeHeader({ variant = 'overlay' }: HomeHeaderProps = {}) {
                 </Link>
               ))}
             </nav>
+
+            {accountLinks.length > 0 && (
+              <>
+                <p className="mb-2 mt-6 px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">Mon espace</p>
+                <div className="space-y-0.5">
+                  {accountLinks.map((link) => (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      onClick={closeAll}
+                      aria-current={isActive(link.path) ? 'page' : undefined}
+                      className="flex min-h-[44px] items-center rounded-xl px-3 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
 
             <p className="mb-2 mt-6 px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">Explorer</p>
             <div className="space-y-0.5">

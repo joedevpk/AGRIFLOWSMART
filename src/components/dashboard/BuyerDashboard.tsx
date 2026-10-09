@@ -83,7 +83,7 @@ export function BuyerDashboard() {
         {priorities.length === 0 ? (
           <Card><CardBody className="flex items-center gap-3 text-sm text-charcoal/70"><CheckCircle2 className="h-5 w-5 shrink-0 text-brand-600" aria-hidden="true" />Rien d'urgent : tout est à jour.</CardBody></Card>
         ) : (
-          <ul className="grid gap-3 sm:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {priorities.map((p) => (
               <li key={p.id}>
                 <Link to={p.to} className={cn('group flex min-h-[64px] items-center gap-3 rounded-2xl border px-4 py-3 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500', p.tone === 'warn' ? 'border-accent-300 bg-accent-50 text-accent-700 hover:bg-accent-100' : 'border-brand-200 bg-brand-50 text-brand-800 hover:bg-brand-100')}>

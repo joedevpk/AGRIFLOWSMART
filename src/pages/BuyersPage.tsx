@@ -27,7 +27,7 @@ export function BuyersPage() {
       </PageHero>
       <section className="py-14 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {buyerTypes.map((bt) => (
               <Card key={bt.title} className="h-full">
                 <CardBody>

@@ -20,7 +20,7 @@ export function ContactBlock({ topic }: { topic: string }) {
     );
   }
   return (
-    <ul className="not-prose grid gap-3 sm:grid-cols-2">
+    <ul className="not-prose grid grid-cols-1 gap-3 sm:grid-cols-2">
       {CONTACT_CHANNELS.map((c) => {
         const Icon = ICONS[c.id];
         const body = (<><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700" aria-hidden="true"><Icon className="h-5 w-5" /></span><span className="min-w-0"><span className="block text-xs text-charcoal/60">{c.label}</span><span className="block break-words text-sm font-medium text-charcoal">{c.value}</span></span></>);

@@ -38,18 +38,18 @@ export function ToastContainer() {
   }, [remove]);
 
   return (
-    <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 max-w-sm">
+    <div className="pointer-events-none fixed inset-x-4 bottom-above-nav z-[100] mb-4 flex flex-col gap-3 md:inset-x-auto md:bottom-6 md:right-6 md:mb-0 md:max-w-sm">
       {toasts.map((t) => (
         <div
           key={t.id}
           className={cn(
-            'flex items-start gap-3 rounded-xl border border-brand-200 border-l-4 bg-offwhite p-4 shadow-lg animate-slide-up',
+            'pointer-events-auto flex items-start gap-3 rounded-xl border border-brand-200 border-l-4 bg-offwhite p-4 shadow-lg animate-slide-up',
             borders[t.type],
           )}
         >
           {icons[t.type]}
-          <p className="flex-1 text-sm text-charcoal/80">{t.message}</p>
-          <button onClick={() => remove(t.id)} className="text-charcoal/40 hover:text-charcoal/70">
+          <p className="min-w-0 flex-1 break-words text-sm text-charcoal/80">{t.message}</p>
+          <button type="button" aria-label="Fermer la notification" onClick={() => remove(t.id)} className="-m-2 flex h-11 w-11 shrink-0 items-center justify-center text-charcoal/40 hover:text-charcoal/70">
             <X className="h-4 w-4" />
           </button>
         </div>

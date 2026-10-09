@@ -1,5 +1,5 @@
 import { PRODUCT_LIST_WITH_PRODUCER } from '@/lib/columns';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Search } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -22,6 +22,7 @@ export function FavoritesPage() {
   const [products, setProducts] = useState<ProductWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const known = useRef<Set<string>>(new Set()); // produits déjà chargés : un retrait/rollback ne relance pas de requête
 
   // Charge les produits une seule fois par liste d'identifiants ; un retrait met à jour la liste localement.
   const idsKey = Array.from(favorites.ids).sort().join(',');
@@ -30,13 +31,19 @@ export function FavoritesPage() {
     if (favorites.error) { setError(true); setLoading(false); return; }
     setError(false);
     const ids = idsKey ? idsKey.split(',') : [];
-    if (ids.length === 0) { setProducts([]); setLoading(false); return; }
+    const missing = ids.filter((id) => !known.current.has(id));
+    if (missing.length === 0) { setLoading(false); return; }
     const { data, error: err } = await supabase
       .from('products')
       .select(PRODUCT_LIST_WITH_PRODUCER)
-      .in('id', ids);
-    if (err) setError(true);
-    else setProducts((data as unknown as ProductWithProfile[]) ?? []);
+      .in('id', missing);
+    if (err) {
+      setError(true);
+    } else {
+      const fetched = (data as unknown as ProductWithProfile[]) ?? [];
+      fetched.forEach((p) => known.current.add(p.id));
+      setProducts((prev) => [...prev.filter((p) => !fetched.some((f) => f.id === p.id)), ...fetched]);
+    }
     setLoading(false);
   }, [user, favorites.loading, favorites.error, idsKey]);
 
@@ -65,7 +72,7 @@ export function FavoritesPage() {
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {visible.map((product) => (
-            <ProductCard key={product.id} product={product} favorite={{ active: true, busy: favorites.busy.has(product.id), onToggle: () => void favorites.toggle(product.id) }} />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}

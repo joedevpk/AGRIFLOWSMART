@@ -121,7 +121,7 @@ export function ConfirmationQueue() {
         <Card className="mt-4">
           <CardBody className="space-y-3">
             <h3 className="text-sm font-bold text-charcoal">{t('admin.queue.settings')}</h3>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <Input label={t('admin.queue.timeout')} type="number" min={1} max={168} step={0.5} value={settings.timeout_hours} onChange={(e) => setNum('timeout_hours', e.target.value)} />
               <Input label={t('admin.queue.reminder')} type="number" min={0.5} step={0.5} value={settings.reminder_after_hours} onChange={(e) => setNum('reminder_after_hours', e.target.value)} />
               <Input label={t('admin.queue.lastReminder')} type="number" min={0.5} step={0.5} value={settings.last_reminder_before_hours} onChange={(e) => setNum('last_reminder_before_hours', e.target.value)} />

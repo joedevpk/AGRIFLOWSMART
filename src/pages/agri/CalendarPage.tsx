@@ -68,7 +68,7 @@ export function CalendarPage() {
           <ConnectionBadge />
         </div>
 
-        <div className="mb-4 grid gap-3 sm:grid-cols-2 sm:max-w-xl">
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:max-w-xl">
           <Select label="Zone" value={zoneId} onChange={(e) => set({ zone: e.target.value })} options={ZONES.map((z) => ({ value: z.id, label: `${z.name} (${z.region})` }))} />
           <Select label="Culture" value={cropId} onChange={(e) => set({ crop: e.target.value })} placeholder="Toutes les cultures" options={CROPS.map((c) => ({ value: c.id, label: c.name }))} />
         </div>

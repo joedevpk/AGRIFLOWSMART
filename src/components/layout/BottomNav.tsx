@@ -47,7 +47,8 @@ export function BottomNav() {
             <Link
               key={item.label}
               to={item.path}
-              className="flex flex-col items-center justify-center gap-1 py-2.5"
+              aria-current={active ? 'page' : undefined}
+              className="flex h-14 min-w-0 flex-col items-center justify-center gap-1 px-0.5 focus:outline-none focus-visible:bg-brand-50"
             >
               <Icon
                 className={cn('h-5 w-5 transition-colors', active ? 'text-brand-600' : 'text-charcoal/40')}
@@ -55,7 +56,7 @@ export function BottomNav() {
               />
               <span
                 className={cn(
-                  'text-[10.5px] font-medium transition-colors',
+                  'max-w-full truncate text-[10.5px] font-medium transition-colors',
                   active ? 'text-brand-700' : 'text-charcoal/40',
                 )}
               >

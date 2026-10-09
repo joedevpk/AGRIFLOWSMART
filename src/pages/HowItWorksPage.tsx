@@ -72,7 +72,7 @@ export function HowItWorksPage() {
       <Section title="Le parcours en 7 étapes"><Timeline /></Section>
 
       <Section tone="soft">
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           {[{ badge: 'Pour les producteurs', title: 'Vendez sans intermédiaire', items: producer, cta: { label: 'Commencer à vendre', to: '/register' } },
             { badge: 'Pour les acheteurs', title: 'Approvisionnez-vous directement', items: buyer, cta: { label: 'Explorer les produits', to: '/marketplace' } }].map((col) => (
             <div key={col.badge}>

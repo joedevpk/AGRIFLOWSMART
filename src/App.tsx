@@ -3,11 +3,14 @@ import { lazy, Suspense, useEffect, type ReactNode } from 'react';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { useAuth } from '@/contexts/auth-context';
 import { CartProvider } from '@/contexts/CartContext';
+import { FavoritesProvider } from '@/contexts/FavoritesContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { SyncProvider } from '@/contexts/SyncContext';
 import { ToastContainer, LoadingState } from '@/components/ui';
 import { BottomNav } from '@/components/layout/BottomNav';
+import { hasBottomNav } from '@/lib/bottom-nav';
+import { ScrollManager } from '@/components/system/ScrollManager';
 import { LandingPage } from '@/pages/LandingPage';
 import { MarketplacePage } from '@/pages/MarketplacePage';
 import { ProductDetailPage } from '@/pages/ProductDetailPage';
@@ -152,19 +155,19 @@ function AppRoutes() {
   );
 }
 
-const NO_BOTTOM_NAV_PREFIXES = ['/login', '/register', '/forgot-password', '/admin'];
-
 function AppShell() {
   const location = useLocation();
   const { user } = useAuth();
   useLastSeen();
   useEffect(() => { setLogUser(user?.id ?? null); }, [user?.id]);
-  const showBottomNav = !NO_BOTTOM_NAV_PREFIXES.some((p) => location.pathname.startsWith(p));
+  const showBottomNav = hasBottomNav(location.pathname);
 
   return (
-    <div className={showBottomNav ? 'pb-16 md:pb-0' : undefined}>
+    <div className={showBottomNav ? 'pb-nav' : undefined}>
       {/* Placé en premier dans le DOM : la bannière est atteinte dès la première tabulation au clavier. */}
       <ConsentManager />
+      {/* Défilement central : haut de page à chaque nouvelle route, restauration sur Précédent/Suivant, ancres. */}
+      <ScrollManager />
       {/* resetKey : une nouvelle route efface l'erreur affichée par la page précédente. */}
       <ErrorBoundary resetKey={location.pathname}>
         <Suspense fallback={<LoadingState />}>
@@ -184,8 +187,10 @@ export default function App() {
           <SyncProvider>
             <CartProvider>
               <BrowserRouter>
-                <AppShell />
-                <ToastContainer />
+                <FavoritesProvider>
+                  <AppShell />
+                  <ToastContainer />
+                </FavoritesProvider>
               </BrowserRouter>
             </CartProvider>
           </SyncProvider>

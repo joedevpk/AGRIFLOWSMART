@@ -70,11 +70,11 @@ export function PlotForm({ userId, initial, onSave, onCancel }: Props) {
   const hasGeo = lat !== '' && lng !== '' && !errors.geo;
   return (
     <form onSubmit={submit} className="space-y-5" noValidate>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input label="Nom de la parcelle" value={name} onChange={(e) => setName(e.target.value)} error={errors.name} maxLength={80} placeholder="Ex. Parcelle du bas-fond" />
         <Select label="Zone de référence" value={zoneId} onChange={(e) => setZoneId(e.target.value)} placeholder="Choisir la zone la plus proche" options={ZONES.map((z) => ({ value: z.id, label: `${z.name} (${z.region})` }))} />
         <Input label="Localité (saisie manuelle)" value={locality} onChange={(e) => setLocality(e.target.value)} maxLength={120} hint="Village, quartier, groupement… si la localisation précise n'est pas disponible." />
-        <div className="grid grid-cols-[1fr_auto] items-end gap-3">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
           <Input label="Superficie" type="number" inputMode="decimal" min="0" step="any" value={area} onChange={(e) => setArea(e.target.value)} error={errors.area} />
           <Select label="Unité" aria-label="Unité de superficie" value={areaUnit} onChange={(e) => setAreaUnit(e.target.value as AreaUnit)} options={opts(AREA_UNIT_LABELS)} />
         </div>
@@ -82,7 +82,7 @@ export function PlotForm({ userId, initial, onSave, onCancel }: Props) {
 
       <fieldset className="space-y-3 rounded-2xl border border-black/[0.06] bg-sage/30 p-4">
         <legend className="px-1 text-sm font-semibold text-charcoal">Coordonnées (facultatif)</legend>
-        <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_1fr_auto] sm:items-end">
           <Input label="Latitude" inputMode="decimal" value={lat} onChange={(e) => setLat(e.target.value)} placeholder="-4.325" />
           <Input label="Longitude" inputMode="decimal" value={lng} onChange={(e) => setLng(e.target.value)} placeholder="15.322" />
           <Button type="button" variant="outline" onClick={locate} loading={locating}><LocateFixed className="h-4 w-4" /> Ma position</Button>
@@ -91,7 +91,7 @@ export function PlotForm({ userId, initial, onSave, onCancel }: Props) {
         <p className="text-xs text-charcoal/55">La position est lue par votre appareil (GPS) et fonctionne sans internet. Aucune carte n'est chargée dans l'application.{hasGeo && <> <a className="inline-flex items-center gap-1 font-medium text-brand-700 underline" href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`} target="_blank" rel="noopener noreferrer">Voir sur OpenStreetMap <ExternalLink className="h-3 w-3" /></a></>}</p>
       </fieldset>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Select label="Culture actuelle" value={currentCrop} onChange={(e) => setCurrentCrop(e.target.value)} placeholder="Aucune" options={cropOptions} />
         <Select label="Culture envisagée" value={plannedCrop} onChange={(e) => setPlannedCrop(e.target.value)} placeholder="Pas encore choisie" options={cropOptions} />
         <Input label="Date de début" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
@@ -100,7 +100,7 @@ export function PlotForm({ userId, initial, onSave, onCancel }: Props) {
 
       <fieldset className="space-y-3 rounded-2xl border border-black/[0.06] p-4">
         <legend className="px-1 text-sm font-semibold text-charcoal">Ce que vous savez de votre terrain (facultatif)</legend>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Select label="Type de sol" value={soilType} onChange={(e) => setSoilType(e.target.value as SoilType | '')} placeholder="Je ne sais pas" options={opts(SOIL_LABELS)} />
           <Input label="pH du sol" type="number" inputMode="decimal" step="0.1" min="3" max="10" value={soilPh} onChange={(e) => setSoilPh(e.target.value)} error={errors.ph} hint="Seulement si mesuré (analyse de sol)." />
           <Select label="Eau disponible" value={water} onChange={(e) => setWater(e.target.value as WaterAccess)} options={opts(WATER_LABELS)} />
@@ -109,7 +109,7 @@ export function PlotForm({ userId, initial, onSave, onCancel }: Props) {
 
       <fieldset className="space-y-3 rounded-2xl border border-black/[0.06] p-4">
         <legend className="px-1 text-sm font-semibold text-charcoal">Production prévue (pour la vendre ensuite)</legend>
-        <div className="grid grid-cols-[1fr_auto] items-end gap-3 sm:max-w-md">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 sm:max-w-md">
           <Input label="Quantité prévue" type="number" inputMode="decimal" min="0" step="any" value={qty} onChange={(e) => setQty(e.target.value)} error={errors.qty} placeholder="Ex. 500" />
           <Select label="Unité" aria-label="Unité de quantité" value={qtyUnit} onChange={(e) => setQtyUnit(e.target.value)} options={UNITS.map((u) => ({ value: u, label: UNIT_LABELS[u] ?? u }))} />
         </div>

@@ -31,7 +31,7 @@ export function CookiePreferencesModal() {
           <button type="button" onClick={closeConsentPreferences} aria-label="Fermer sans modifier mes choix" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-charcoal/70 hover:bg-black/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"><X className="h-5 w-5" aria-hidden="true" /></button>
         </div>
         <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6"><ConsentCategories value={choices} onChange={setChoices} /></div>
-        <div className="grid gap-2 border-t border-black/[0.08] bg-offwhite px-5 py-4 pb-safe sm:grid-cols-3 sm:px-6">
+        <div className="grid grid-cols-1 gap-2 border-t border-black/[0.08] bg-offwhite px-5 py-4 pb-safe sm:grid-cols-3 sm:px-6">
           <button type="button" onClick={() => saveConsent(choices)} className={buttonStyles({ variant: 'primary', className: 'w-full whitespace-normal' })}>Enregistrer mes préférences</button>
           <button type="button" onClick={acceptAll} className={buttonStyles({ variant: 'outline', className: 'w-full whitespace-normal' })}>Tout accepter</button>
           <button type="button" onClick={rejectNonEssential} className={buttonStyles({ variant: 'outline', className: 'w-full whitespace-normal' })}>Refuser les non essentiels</button>

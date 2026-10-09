@@ -153,7 +153,7 @@ export function PlotDetailPage() {
           <Card><CardBody className="space-y-3">
             <h2 className="text-lg font-semibold text-charcoal">Calendrier — {crop.name}{zone ? ` à ${zone.name}` : ''}</h2>
             {phases ? (
-              <dl className="grid gap-3 text-sm sm:grid-cols-3">
+              <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
                 <div><dt className="font-semibold text-charcoal">{crop.sowing === 'perennial' ? 'Plantation' : 'Semis'}</dt><dd className="text-charcoal/65">{monthsToText(phases.sow)}</dd></div>
                 <div><dt className="font-semibold text-charcoal">Récolte (estimation)</dt><dd className="text-charcoal/65">{phases.longCycleNote ?? monthsToText(phases.harvest)}</dd></div>
                 <div><dt className="font-semibold text-charcoal">Cycle</dt><dd className="text-charcoal/65">{crop.cycleLabel}</dd></div>

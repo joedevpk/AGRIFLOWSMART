@@ -20,7 +20,7 @@ function ManageConsent() {
         {saved && <span className="ml-2 inline-flex items-center gap-1 font-semibold text-brand-800 dark:text-brand-200"><CheckCircle2 className="h-4 w-4" aria-hidden="true" /> Préférences enregistrées.</span>}
       </p>
       <ConsentCategories value={choices} onChange={(c) => { setChoices(c); setSaved(false); }} />
-      <div className="mt-5 grid gap-2 sm:grid-cols-3">
+      <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-3">
         <button type="button" onClick={wrap(() => saveConsent(choices))} className={buttonStyles({ variant: 'primary', className: 'w-full whitespace-normal' })}>Enregistrer mes préférences</button>
         <button type="button" onClick={wrap(() => { acceptAll(); setChoices({ preferences: true, analytics: false }); })} className={buttonStyles({ variant: 'outline', className: 'w-full whitespace-normal' })}>Tout accepter</button>
         <button type="button" onClick={wrap(() => { rejectNonEssential(); setChoices({ preferences: false, analytics: false }); })} className={buttonStyles({ variant: 'outline', className: 'w-full whitespace-normal' })}>Refuser les non essentiels</button>

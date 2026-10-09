@@ -109,13 +109,13 @@ export function ContactProducerButton({
       {open && createPortal(
         <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-label={`Contacter ${producerName}`}>
           <div className="absolute inset-0 bg-charcoal/50 animate-fade-in" onClick={() => setOpen(false)} />
-          <div className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl bg-offwhite p-5 pb-safe shadow-lift animate-slide-up">
+          <div className="relative max-h-sheet w-full overflow-y-auto overscroll-contain rounded-t-3xl bg-offwhite p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-lift animate-slide-up sm:max-w-md sm:rounded-3xl">
             <div className="flex items-start justify-between gap-3 mb-4">
               <div>
                 <h2 className="text-lg font-bold text-charcoal">Contacter {producerName}</h2>
                 {(subject ?? productName) && <p className="text-sm text-charcoal/50">À propos de : {subject ?? productName}</p>}
               </div>
-              <button type="button" onClick={() => setOpen(false)} aria-label="Fermer" className="rounded-full p-2 text-charcoal/50 hover:bg-black/5">
+              <button type="button" onClick={() => setOpen(false)} aria-label="Fermer" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-charcoal/50 hover:bg-black/5">
                 <X className="h-5 w-5" />
               </button>
             </div>

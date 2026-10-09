@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
-import { MapPin, Package, BadgeCheck, Sprout, Heart, PauseCircle } from 'lucide-react';
+import { MapPin, Package, BadgeCheck, Sprout, PauseCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/language-context';
 import { isProducerAccepting } from '@/lib/order-confirmation';
 import { Avatar } from '@/components/ui/Avatar';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { buttonStyles } from '@/components/ui/button-styles';
+import { FavoriteButton } from '@/components/ui/FavoriteButton';
 import { ContactProducerButton } from '@/components/marketplace/ContactProducer';
 import { useAuth } from '@/contexts/auth-context';
 import type { ProductWithProfile } from '@/types';
@@ -19,8 +20,6 @@ interface ProductCardProps {
   showProducer?: boolean;
   /** Aperçu (publication) : mêmes visuels, actions inertes. */
   preview?: boolean;
-  /** Bouton favori (état fourni par la page, un seul chargement pour toute la liste). */
-  favorite?: { active: boolean; busy?: boolean; onToggle: () => void };
 }
 
 /**
@@ -28,7 +27,7 @@ interface ProductCardProps {
  * prix en vert, producteur, CTA « Commander » + « Contacter ».
  * Pas de <a> englobant : les boutons ne sont jamais imbriqués dans un lien.
  */
-export function ProductCard({ product, view = 'grid', showProducer = true, preview = false, favorite }: ProductCardProps) {
+export function ProductCard({ product, view = 'grid', showProducer = true, preview = false }: ProductCardProps) {
   const { user } = useAuth();
   const { t } = useLanguage();
   const producer = product.profiles;
@@ -68,18 +67,6 @@ export function ProductCard({ product, view = 'grid', showProducer = true, previ
           <span className="rounded-full bg-offwhite/95 px-2.5 py-1 text-xs font-medium text-charcoal/70 shadow-sm">Négociable</span>
         )}
       </div>
-      {favorite && !preview && (
-        <button
-          type="button"
-          onClick={favorite.onToggle}
-          disabled={favorite.busy}
-          aria-pressed={favorite.active}
-          aria-label={favorite.active ? `Retirer ${product.name} des favoris` : `Ajouter ${product.name} aux favoris`}
-          className="absolute bottom-3 right-3 flex h-11 w-11 items-center justify-center rounded-full bg-offwhite/95 text-charcoal/70 shadow-sm transition-colors hover:text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 disabled:opacity-60"
-        >
-          <Heart className={cn('h-5 w-5', favorite.active && 'fill-rose-500 text-rose-500')} aria-hidden="true" />
-        </button>
-      )}
     </div>
   );
 
@@ -89,7 +76,13 @@ export function ProductCard({ product, view = 'grid', showProducer = true, previ
       !preview && 'hover:-translate-y-0.5 hover:shadow-card-hover hover:border-brand-200',
       isList ? 'flex' : 'flex h-full flex-col',
     )}>
-      {preview ? media : <Link to={href} aria-label={`Voir l'offre : ${product.name}`} tabIndex={-1} className={cn('block', isList && 'shrink-0')}>{media}</Link>}
+      {preview ? media : (
+        // Le cœur est un FRÈRE du lien (jamais imbriqué dedans) : un appui dessus n'ouvre pas la fiche produit.
+        <div className={cn('relative', isList && 'shrink-0')}>
+          <Link to={href} aria-label={`Voir l'offre : ${product.name}`} tabIndex={-1} className="block">{media}</Link>
+          {!isOwn && <FavoriteButton productId={product.id} productName={product.name} className="absolute bottom-2 right-2" />}
+        </div>
+      )}
 
       <div className="flex min-w-0 flex-1 flex-col p-4">
         <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-600/80">

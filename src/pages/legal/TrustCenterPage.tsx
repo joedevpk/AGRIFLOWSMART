@@ -44,7 +44,7 @@ export function TrustCenterPage() {
 
         <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8" aria-labelledby="topics-h">
           <h2 id="topics-h" className="sr-only">Nos engagements et documents</h2>
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {TOPICS.map((t) => (
               <li key={t.id} id={t.id} className="flex flex-col rounded-2xl border border-black/[0.06] bg-offwhite p-5 shadow-card">
                 <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700" aria-hidden="true"><t.icon className="h-5 w-5" /></span>
@@ -60,7 +60,7 @@ export function TrustCenterPage() {
         <section className="bg-offwhite py-12 sm:py-16" aria-labelledby="moments-h">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <h2 id="moments-h" className="text-2xl font-bold tracking-tight text-charcoal sm:text-3xl">Au bon moment, la bonne information</h2>
-            <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ol className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {STEPS.map((s, i) => (
                 <li key={s.title}>
                   <Link to={s.to} className="flex h-full flex-col rounded-2xl border border-black/[0.06] bg-cream p-5 hover:border-brand-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">

@@ -63,7 +63,7 @@ export function ProducerRequestsPage() {
           <p className="text-sm text-charcoal/60">
             {rows.length} demande{rows.length > 1 ? 's' : ''} ouverte{rows.length > 1 ? 's' : ''} · {matchingCount} correspond{matchingCount > 1 ? 'ent' : ''} à vos productions
           </p>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant={onlyMatching ? 'primary' : 'outline'} size="sm" onClick={() => setOnlyMatching(!onlyMatching)} aria-pressed={onlyMatching}>
               Correspond à mes productions
             </Button>

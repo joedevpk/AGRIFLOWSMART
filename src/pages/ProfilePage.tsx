@@ -80,7 +80,7 @@ export function ProfilePage() {
               <Avatar name={fullName} src={avatarUrl} size="xl" />
               <div className="min-w-0">
                 <h2 className="text-xl font-bold text-charcoal">{fullName}</h2>
-                <div className="flex items-center gap-2 mt-1">
+                <div className="mt-1 flex flex-wrap items-center gap-2">
                   <Badge variant="brand">{ROLE_LABELS[profile.role]}</Badge>
                   {profile.buyer_type && <Badge variant="neutral">{BUYER_TYPE_LABELS[profile.buyer_type]}</Badge>}
                   {profile.is_verified && <Badge variant="success" dot>Vérifié</Badge>}
@@ -98,11 +98,11 @@ export function ProfilePage() {
         <Card>
           <CardBody>
             <form id="profil-form" onSubmit={handleSave} className="scroll-mt-24 space-y-5">
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Input label="Nom complet" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
                 <Input label="Téléphone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+243 ..." />
               </div>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Select label="Province" value={province} onChange={(e) => setProvince(e.target.value)} placeholder="Sélectionner" options={PROVINCES.map((p) => ({ value: p, label: p }))} />
                 <Input label="Ville" value={city} onChange={(e) => setCity(e.target.value)} />
               </div>

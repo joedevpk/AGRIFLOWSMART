@@ -99,17 +99,17 @@ export function FilterSheet({ open, resultCount, onClose, onReset, ...groups }: 
   return createPortal(
     <div className="fixed inset-0 z-[70] flex items-end lg:hidden" role="dialog" aria-modal="true" aria-label="Filtres">
       <div className="absolute inset-0 bg-charcoal/50 animate-fade-in" onClick={onClose} />
-      <div className="relative flex max-h-[88vh] w-full flex-col rounded-t-3xl bg-offwhite shadow-lift animate-slide-up">
+      <div className="relative flex max-h-sheet w-full flex-col rounded-t-3xl bg-offwhite shadow-lift animate-slide-up">
         <div className="flex items-center justify-between border-b border-black/[0.06] px-5 py-4">
           <h2 className="text-lg font-bold text-charcoal">Filtres</h2>
-          <button type="button" onClick={onClose} aria-label="Fermer les filtres" className="rounded-full p-2 text-charcoal/50 hover:bg-black/5">
+          <button type="button" onClick={onClose} aria-label="Fermer les filtres" className="flex h-11 w-11 items-center justify-center rounded-full text-charcoal/50 hover:bg-black/5">
             <X className="h-5 w-5" />
           </button>
         </div>
         <div className="flex-1 overflow-y-auto px-5 py-5">
           <FilterGroups {...groups} />
         </div>
-        <div className="flex gap-3 border-t border-black/[0.06] px-5 py-4 pb-safe">
+        <div className="flex gap-3 border-t border-black/[0.06] px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <Button variant="outline" onClick={onReset}>Réinitialiser</Button>
           <Button fullWidth onClick={onClose}>
             Voir {resultCount} résultat{resultCount > 1 ? 's' : ''}

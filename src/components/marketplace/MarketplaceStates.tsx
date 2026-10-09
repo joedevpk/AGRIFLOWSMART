@@ -43,7 +43,7 @@ export function MarketplaceSkeleton({ count = 6, list = false }: { count?: numbe
 
 export function ProductSkeleton() {
   return (
-    <div className="grid lg:grid-cols-2 gap-8 lg:gap-12" role="status" aria-label="Chargement de la fiche produit">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12" role="status" aria-label="Chargement de la fiche produit">
       <div className="space-y-3">
         <Skeleton className="aspect-[4/3] w-full rounded-3xl" />
         <div className="flex gap-2.5">

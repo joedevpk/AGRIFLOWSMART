@@ -124,8 +124,13 @@ export function CheckoutPage() {
   const goToStep = (step: CheckoutStep) => {
     setProblem(null);
     update({ step });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Changement d'étape : retour en haut APRÈS le rendu de la nouvelle étape (contenu plus court = pas de saut vers le footer).
+  const currentStep = draft?.step;
+  useEffect(() => {
+    if (currentStep) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [currentStep]);
 
   const continueFromCart = () => {
     if (cartBlocked || !verified) return;
@@ -285,7 +290,7 @@ export function CheckoutPage() {
       </details>
       <p role="status" aria-live="polite" className="sr-only">{submitting ? 'Traitement de la commande en cours, veuillez patienter.' : ''}</p>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="space-y-4">
           {problem && (
             <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
@@ -365,12 +370,12 @@ export function CheckoutPage() {
                   <h2 className="flex items-center gap-2 text-lg font-bold text-charcoal"><MapPin className="h-5 w-5 text-brand-600" aria-hidden="true" /> Adresse de livraison</h2>
                   <p className="mt-1 text-sm text-charcoal/55">{estimateDelivery().hint}</p>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Input id="recipient_name" label="Nom du destinataire" autoComplete="name" value={draft.delivery.recipient_name} onChange={(e) => setField('recipient_name', e.target.value)} error={errors.recipient_name} maxLength={120} required />
                   <Input id="recipient_phone" label="Téléphone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+243 812 345 678" value={draft.delivery.recipient_phone} onChange={(e) => setField('recipient_phone', e.target.value)} error={errors.recipient_phone} maxLength={30} required />
                 </div>
                 <Input id="address" label="Adresse ou point de livraison" autoComplete="street-address" placeholder="Avenue, numéro, quartier, point de repère" value={draft.delivery.address} onChange={(e) => setField('address', e.target.value)} error={errors.address} maxLength={300} required />
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Input id="city" label="Ville" autoComplete="address-level2" placeholder="Kinshasa" value={draft.delivery.city} onChange={(e) => setField('city', e.target.value)} error={errors.city} maxLength={100} required />
                   <Input id="commune" label="Commune (facultatif)" value={draft.delivery.commune} onChange={(e) => setField('commune', e.target.value)} error={errors.commune} maxLength={100} />
                 </div>

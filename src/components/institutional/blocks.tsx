@@ -22,7 +22,7 @@ export function Section({ title, intro, children, tone = 'plain' }: { title?: st
 
 export function FeatureGrid({ features }: { features: Feature[] }) {
   return (
-    <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {features.map((f) => (
         <li key={f.title} className="rounded-2xl border border-black/[0.06] bg-offwhite p-5 shadow-card">
           <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><f.icon className="h-5 w-5" aria-hidden="true" /></span>

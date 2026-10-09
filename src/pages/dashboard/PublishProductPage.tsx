@@ -296,7 +296,7 @@ export function PublishProductPage() {
           <ArrowLeft className="h-4 w-4" /> Retour
         </button>
 
-        <div className="grid items-start gap-8 lg:grid-cols-[1fr_380px]">
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
           <Card>
             <CardBody>
               <form onSubmit={handleSubmit} className="space-y-8" noValidate>
@@ -320,7 +320,7 @@ export function PublishProductPage() {
                       ))}
                     </div>
                   </div>
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <Select label="Catégorie" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Sélectionner" options={CATEGORIES.map((c) => ({ value: c.id, label: c.label }))} error={errors.category} />
                     <Input label="Variété (optionnel)" placeholder="Ex : maïs jaune, tomate Roma..." value={variety} maxLength={60} onChange={(e) => setVariety(e.target.value)} />
                   </div>
@@ -331,7 +331,7 @@ export function PublishProductPage() {
                     <Input label="Quantité" type="number" inputMode="decimal" min="0" placeholder="500" value={quantity} onChange={(e) => setQuantity(e.target.value)} error={errors.quantity} />
                     <Select label="Unité" value={unit} onChange={(e) => setUnit(e.target.value)} options={UNITS.map((u) => ({ value: u, label: UNIT_LABELS[u] || u }))} />
                   </div>
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <Input label={`Prix par unité (${currency})`} type="number" inputMode="decimal" min="0" step="0.01" placeholder="0.50" value={price} onChange={(e) => setPrice(e.target.value)} error={errors.price} />
                     <label className="flex cursor-pointer items-center gap-2 sm:pt-7">
                       <input type="checkbox" checked={priceNegotiable} onChange={(e) => setPriceNegotiable(e.target.checked)} className="h-4 w-4 rounded border-black/20 text-brand-600 focus:ring-brand-500" />
@@ -341,7 +341,7 @@ export function PublishProductPage() {
                 </Section>
 
                 <Section n={3} title="Localisation et disponibilité">
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <Select label="Province" value={province} onChange={(e) => setProvince(e.target.value)} placeholder="Sélectionner" options={PROVINCES.map((p) => ({ value: p, label: p }))} error={errors.province} />
                     <Input label="Ville (optionnel)" placeholder="Kinshasa" value={city} maxLength={60} onChange={(e) => setCity(e.target.value)} />
                   </div>
@@ -423,17 +423,17 @@ export function PublishProductPage() {
       <button
         type="button"
         onClick={() => setPreviewOpen(true)}
-        className="lg:hidden fixed bottom-20 right-4 z-40 inline-flex items-center gap-2 rounded-full bg-accent-400 px-5 py-3 text-sm font-bold text-charcoal shadow-lift"
+        className="lg:hidden fixed bottom-above-nav mb-4 right-4 z-40 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-accent-400 px-5 py-3 text-sm font-bold text-charcoal shadow-lift"
       >
         <Eye className="h-4 w-4" /> Aperçu
       </button>
       {previewOpen && (
         <div className="lg:hidden fixed inset-0 z-[70] flex items-end" role="dialog" aria-modal="true" aria-label="Aperçu de la carte produit">
           <div className="absolute inset-0 bg-charcoal/50" onClick={() => setPreviewOpen(false)} />
-          <div className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-3xl bg-cream p-4 pb-8 animate-slide-up">
+          <div className="relative max-h-sheet w-full overflow-y-auto rounded-t-3xl bg-cream p-4 pb-[max(2rem,env(safe-area-inset-bottom))] animate-slide-up">
             <div className="mb-3 flex items-center justify-between">
               <p className="text-sm font-bold text-charcoal">Aperçu de votre carte</p>
-              <button type="button" onClick={() => setPreviewOpen(false)} aria-label="Fermer l'aperçu" className="rounded-full p-2 text-charcoal/50 hover:bg-black/5"><X className="h-5 w-5" /></button>
+              <button type="button" onClick={() => setPreviewOpen(false)} aria-label="Fermer l'aperçu" className="flex h-11 w-11 items-center justify-center rounded-full text-charcoal/50 hover:bg-black/5"><X className="h-5 w-5" /></button>
             </div>
             {previewCard}
           </div>

@@ -229,7 +229,7 @@ function OfflineTab() {
         {!import.meta.env.PROD && <p className="text-xs text-charcoal/45">Le service worker n'est actif que sur la version publiée (build de production).</p>}
       </CardBody></Card>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card><CardBody>
           <h3 className="mb-2 font-semibold text-charcoal">Disponible hors connexion</h3>
           <ul className="space-y-1.5 text-sm text-charcoal/70">

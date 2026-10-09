@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronDown, Clock, ListTree, ShieldAlert } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Header, Footer } from '@/components/layout/Header';
@@ -43,18 +43,9 @@ function useActiveSection(ids: string[]): string {
 export function LegalLayout({ seo, icon: Icon, title, intro, sections, path, needsLegalReview = true }: Props) {
   useSeo(seo);
   const navigate = useNavigate();
-  const { hash } = useLocation();
   const [tocOpen, setTocOpen] = useState(false);
   const ids = sections.map((s) => s.id);
   const active = useActiveSection(ids);
-
-  useEffect(() => {
-    if (hash) {
-      const el = document.getElementById(decodeURIComponent(hash.slice(1)));
-      if (el) { el.scrollIntoView(); return; }
-    }
-    window.scrollTo(0, 0);
-  }, [hash, path]);
 
   const goBack = () => {
     const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
@@ -96,7 +87,7 @@ export function LegalLayout({ seo, icon: Icon, title, intro, sections, path, nee
           )}
         </div>
 
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-14 lg:px-8">
+        <div className="mx-auto grid grid-cols-1 max-w-6xl gap-10 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-14 lg:px-8">
           <aside className="hidden lg:block">
             <nav aria-label="Sommaire de la page" className="sticky top-24 max-h-[calc(100dvh-8rem)] overflow-y-auto rounded-2xl border border-black/[0.06] bg-offwhite p-4 shadow-card">
               <p className="mb-2 px-2 text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-300">Sommaire</p>

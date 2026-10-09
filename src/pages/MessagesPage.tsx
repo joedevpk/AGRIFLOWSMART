@@ -114,7 +114,7 @@ export function MessagesPage() {
 
   return (
     <DashboardLayout title="Messages">
-      <div className="flex h-[calc(100vh-12rem)] rounded-2xl border border-brand-200 overflow-hidden bg-offwhite">
+      <div className="flex h-chat min-h-[420px] rounded-2xl border border-brand-200 overflow-hidden bg-offwhite">
         {/* Conversation list */}
         <div className={cn('w-full sm:w-72 border-r border-brand-200 overflow-y-auto', activeConv && 'hidden sm:block')}>
           {conversations.length === 0 ? (
@@ -134,21 +134,21 @@ export function MessagesPage() {
         </div>
 
         {/* Chat area */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           {activeConversation ? (
             <>
               <div className="flex items-center gap-3 p-4 border-b border-brand-200">
-                <button className="sm:hidden p-1 rounded-lg hover:bg-cream" onClick={() => setActiveConv(null)}>←</button>
+                <button type="button" aria-label="Retour aux conversations" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-lg hover:bg-cream sm:hidden" onClick={() => setActiveConv(null)}>←</button>
                 <Avatar name={activeConversation.otherUser.full_name} src={activeConversation.otherUser.avatar_url} size="sm" />
                 <div>
                   <p className="font-medium text-charcoal">{activeConversation.otherUser.full_name}</p>
                   <p className="text-xs text-charcoal/60">{activeConversation.otherUser.city || 'RDC'}</p>
                 </div>
               </div>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain p-4">
                 {activeConversation.messages.map((m) => (
                   <div key={m.id} className={cn('flex', m.sender_id === user?.id ? 'justify-end' : 'justify-start')}>
-                    <div className={cn('max-w-[75%] rounded-2xl px-4 py-2 text-sm', m.sender_id === user?.id ? 'bg-brand-600 text-white' : 'bg-cream text-charcoal/80')}>
+                    <div className={cn('max-w-[85%] break-words rounded-2xl px-4 py-2 text-sm sm:max-w-[75%]', m.sender_id === user?.id ? 'bg-brand-600 text-white' : 'bg-cream text-charcoal/80')}>
                       {m.content}
                       <p className={cn('text-[10px] mt-1', m.sender_id === user?.id ? 'text-brand-100' : 'text-charcoal/40')}>{timeAgo(m.created_at)}</p>
                     </div>
@@ -157,8 +157,8 @@ export function MessagesPage() {
                 <div ref={messagesEndRef} />
               </div>
               <div className="p-4 border-t border-brand-200 flex gap-2">
-                <input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()} placeholder="Écrivez un message..." className="flex-1 rounded-xl border border-brand-200 px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10" />
-                <Button onClick={handleSend} loading={sending} disabled={!newMessage.trim()}><Send className="h-4 w-4" /></Button>
+                <input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()} placeholder="Écrivez un message..." aria-label="Votre message" enterKeyHint="send" className="min-w-0 flex-1 rounded-xl border border-brand-200 px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10" />
+                <Button onClick={handleSend} loading={sending} disabled={!newMessage.trim()} aria-label="Envoyer le message" className="min-h-[44px] min-w-[44px] shrink-0"><Send className="h-4 w-4" aria-hidden="true" /></Button>
               </div>
             </>
           ) : (

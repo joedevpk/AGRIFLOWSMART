@@ -90,7 +90,7 @@ export function EmptyNotifications() {
 
 export function CartSkeleton() {
   return (
-    <div className="grid gap-6 lg:grid-cols-3" role="status" aria-label="Chargement du panier">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3" role="status" aria-label="Chargement du panier">
       <div className="space-y-4 lg:col-span-2">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="flex gap-4 rounded-2xl border border-black/[0.06] bg-offwhite p-4">
@@ -112,7 +112,7 @@ export function CheckoutSkeleton() {
   return (
     <div className="space-y-6" role="status" aria-label="Chargement du paiement">
       <Skeleton className="h-8 w-full max-w-xl" />
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
           <Skeleton className="h-6 w-40" />
           <Skeleton className="h-11 w-full rounded-xl" />
@@ -137,7 +137,7 @@ export function OrderDetailSkeleton() {
   return (
     <div className="max-w-4xl space-y-6" role="status" aria-label="Chargement de la commande">
       <Skeleton className="h-9 w-64" />
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <Skeleton className="h-40 rounded-2xl" />
           <Skeleton className="h-72 rounded-2xl" />

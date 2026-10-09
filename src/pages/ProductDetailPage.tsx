@@ -5,9 +5,9 @@ import { useLanguage } from '@/contexts/language-context';
 import { isProducerAccepting, unavailableUntil, formatDeadline } from '@/lib/order-confirmation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSeo } from '@/hooks/useSeo';
-import { useNavigate, useParams, useSearchParams, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams, Link } from 'react-router-dom';
 import {
-  ArrowLeft, MapPin, Package, CalendarDays, Heart, ShoppingCart,
+  ArrowLeft, MapPin, Package, CalendarDays, ShoppingCart,
   BadgeCheck, Truck, Tag, ChevronRight, Check,
 } from 'lucide-react';
 import { Header, Footer } from '@/components/layout/Header';
@@ -19,7 +19,7 @@ import { ContactProducerButton } from '@/components/marketplace/ContactProducer'
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/auth-context';
 import { useCart } from '@/contexts/cart-context';
-import { isProductFavorited, addFavorite, removeFavorite } from '@/services/favoritesService';
+import { FavoriteButton } from '@/components/ui/FavoriteButton';
 import type { LiveProduct, ProductWithProfile } from '@/types';
 import { formatPrice, formatQuantity, formatDate, UNIT_LABELS } from '@/lib/constants';
 import { getProductImage } from '@/lib/image-config';
@@ -32,9 +32,8 @@ const PRODUCT_SELECT = PRODUCT_DETAIL_WITH_PRODUCER;
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchParams] = useSearchParams();
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const [product, setProduct] = useState<ProductWithProfile | null>(null);
   useSeo({
     title: product ? `${product.name} | AgriFlow RDC` : 'Produit | AgriFlow RDC',
@@ -48,8 +47,6 @@ export function ProductDetailPage() {
   const { t, language } = useLanguage();
   const [quantity, setQuantity] = useState(1);
   const focusOrder = searchParams.get('commander') === '1';
-  const [favorited, setFavorited] = useState(false);
-  const [favoriteBusy, setFavoriteBusy] = useState(false);
   const [related, setRelated] = useState<{ similar: ProductWithProfile[]; fromProducer: ProductWithProfile[] }>({ similar: [], fromProducer: [] });
   const orderRef = useRef<HTMLDivElement>(null);
 
@@ -91,16 +88,6 @@ export function ProductDetailPage() {
   useEffect(() => {
     if (focusOrder && product) orderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [focusOrder, product]);
-
-  // État réel du favori (table `favorites`, propriétaire = utilisateur connecté).
-  useEffect(() => {
-    let cancelled = false;
-    if (!user || !product) { setFavorited(false); return; }
-    isProductFavorited(user.id, product.id).then((result) => {
-      if (!cancelled && result.ok) setFavorited(result.data);
-    });
-    return () => { cancelled = true; };
-  }, [user, product]);
 
   if (loading) {
     return (
@@ -165,28 +152,6 @@ export function ProductDetailPage() {
     if (addCurrentToCart() || inCart > 0) navigate('/cart');
   };
 
-  // Favori persisté (table `favorites`). Mise à jour optimiste avec retour arrière si l'écriture échoue.
-  const toggleFavorite = async () => {
-    if (authLoading) return;
-    if (!user) {
-      toast('info', 'Connectez-vous pour ajouter des favoris.');
-      navigate('/login', { state: { from: `${location.pathname}${location.search}` } });
-      return;
-    }
-    if (favoriteBusy) return;
-    const next = !favorited;
-    setFavorited(next);
-    setFavoriteBusy(true);
-    const ok = next ? await addFavorite(user.id, product.id) : await removeFavorite(user.id, product.id);
-    setFavoriteBusy(false);
-    if (!ok) {
-      setFavorited(!next);
-      toast('error', 'Impossible de mettre à jour vos favoris. Réessayez.');
-      return;
-    }
-    toast('success', next ? 'Offre ajoutée à vos favoris.' : 'Retiré des favoris.');
-  };
-
   const orderControls = (
     <>
       <div className="mb-4 flex items-end justify-between gap-4">
@@ -222,7 +187,7 @@ export function ProductDetailPage() {
           <span className="truncate text-charcoal/80">{product.name}</span>
         </nav>
 
-        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
           {/* Colonne gauche : galerie + producteur */}
           <div className="space-y-5 lg:sticky lg:top-24 lg:self-start">
             <ProductGallery images={images} alt={productAlt(product)} fallbackSrc={fallbackImage} />
@@ -272,7 +237,10 @@ export function ProductDetailPage() {
 
               {!isOwn && !canOrder && (
                 <div className="rounded-xl border border-black/[0.06] bg-offwhite px-4 py-3 text-sm text-charcoal/60">
-                  Cette production n'est plus disponible à la commande. Vous pouvez contacter le producteur pour connaître la prochaine récolte.
+                  <div className="flex items-center justify-between gap-3">
+                    <p>Cette production n'est plus disponible à la commande. Vous pouvez contacter le producteur pour connaître la prochaine récolte.</p>
+                    <FavoriteButton productId={product.id} productName={product.name} variant="inline" />
+                  </div>
                 </div>
               )}
 
@@ -285,6 +253,7 @@ export function ProductDetailPage() {
                   <p className="mt-3 flex items-start gap-2 text-sm font-medium"><PauseCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />{t('producer.noImmediate')}{producerBackOn ? ` ${t('producer.unavailableUntil', { date: formatDeadline(producerBackOn, language) })}.` : ''}</p>
                   <div className="mt-3 flex gap-3">
                     <ContactProducerButton producerId={product.user_id} producerName={producerName} productId={product.id} productName={product.name} size="lg" className="flex-1" />
+                    <FavoriteButton productId={product.id} productName={product.name} variant="inline" />
                   </div>
                 </div>
               )}
@@ -294,16 +263,7 @@ export function ProductDetailPage() {
                   {orderControls}
                   <div className="mt-3 flex gap-3">
                     <ContactProducerButton producerId={product.user_id} producerName={producerName} productId={product.id} productName={product.name} size="lg" className="flex-1" />
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      loading={favoriteBusy}
-                      aria-label={favorited ? 'Retirer des favoris' : 'Ajouter aux favoris'}
-                      aria-pressed={favorited}
-                      onClick={toggleFavorite}
-                    >
-                      <Heart className={favorited ? 'h-5 w-5 fill-rose-500 text-rose-500' : 'h-5 w-5'} />
-                    </Button>
+                    <FavoriteButton productId={product.id} productName={product.name} variant="inline" />
                   </div>
                 </div>
               )}
@@ -387,7 +347,7 @@ export function ProductDetailPage() {
 
       {/* CTA sticky mobile (au-dessus de la bottom navigation) */}
       {!isOwn && (
-        <div className="fixed inset-x-0 bottom-16 z-30 border-t border-black/[0.06] bg-offwhite/95 px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] backdrop-blur-sm lg:hidden">
+        <div className="fixed inset-x-0 bottom-above-nav z-30 border-t border-black/[0.06] bg-offwhite/95 px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] backdrop-blur-sm lg:hidden">
           <div className="flex items-center gap-2">
             <div className="hidden min-w-0 flex-1 min-[420px]:block">
               <p className="truncate text-[11px] leading-tight text-charcoal/50">Prix / {unitLabel}</p>
