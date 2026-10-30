@@ -1,3 +1,4 @@
+import { authRedirectUrl } from '@/lib/native/urls';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
@@ -17,8 +18,16 @@ export function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (sending) return;
+    // Le lien de l'e-mail doit pointer vers le site PUBLIC : dans l'application native, l'origine de la WebView (https://localhost)
+    // est inutilisable sur un téléphone. Sans URL publique configurée, on n'envoie pas un lien cassé.
+    const redirectTo = authRedirectUrl('/reset-password');
+    if (!redirectTo) {
+      reportError('ForgotPasswordPage.submit', 'VITE_PUBLIC_WEB_URL manquante dans le build natif');
+      toast('error', 'La récupération du mot de passe n\'est pas disponible dans cette version de l\'application. Utilisez le site web.');
+      return;
+    }
     setSending(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/login` });
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo });
     setSending(false);
     if (error) {
       reportError('ForgotPasswordPage.submit', error.message, { fn: 'resetPasswordForEmail' });

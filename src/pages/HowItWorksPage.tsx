@@ -17,9 +17,9 @@ const STEPS: Step[] = [
   { num: '02', title: 'Il publie sa production', text: 'Produit, quantité, prix, localisation, photos et date de disponibilité.', icon: PackageCheck },
   { num: '03', title: 'Les acheteurs découvrent les produits', text: 'Recherche par produit, catégorie ou province sur la marketplace ; les acheteurs peuvent aussi publier une demande d\'achat (Agri-Match).', icon: Search },
   { num: '04', title: 'L\'acheteur passe commande', text: 'Il choisit la quantité, renseigne l\'adresse de livraison ; le producteur est notifié et confirme la commande.', icon: ShoppingCart },
-  { num: '05', title: 'Le paiement est effectué', text: 'En ligne via CinetPay (Mobile Money ou carte) ou en espèces à la livraison.', icon: CreditCard },
+  { num: '05', title: 'Le paiement est effectué', text: 'En espèces à la livraison. Le paiement en ligne (Mobile Money) sera proposé dès son activation.', icon: CreditCard },
   { num: '06', title: 'La livraison est suivie', text: 'Préparation, livraison et réception sont suivies étape par étape dans l\'application.', icon: Truck, note: 'AgriFlow suit le statut de la livraison ; il n\'affecte pas automatiquement de transporteur.' },
-  { num: '07', title: 'Le producteur reçoit son paiement', text: 'À la confirmation du paiement, le montant net (après commission de la plateforme) est calculé pour le producteur.', icon: Wallet, note: 'Le versement au producteur est aujourd\'hui un processus manuel, pas un virement automatique.' },
+  { num: '07', title: 'Le producteur reçoit son paiement', text: 'Lorsque le paiement est confirmé, le montant net (produits moins commission validée de la plateforme) est calculé pour le producteur.', icon: Wallet, note: 'Le versement au producteur est aujourd\'hui un processus manuel, pas un virement automatique.' },
 ];
 
 function Timeline() {
@@ -56,7 +56,7 @@ export function HowItWorksPage() {
     { icon: PackageCheck, text: 'Publiez vos productions en quelques minutes' },
     { icon: TrendingUp, text: 'Fixez vos prix et indiquez la disponibilité' },
     { icon: BadgeCheck, text: 'Recevez des commandes directement des acheteurs' },
-    { icon: ShieldCheck, text: 'Paiement en ligne (Mobile Money, carte) ou à la livraison' },
+    { icon: ShieldCheck, text: 'Paiement à la livraison ; paiement en ligne bientôt' },
   ];
   const buyer = [
     { icon: Search, text: 'Recherchez par produit, catégorie ou localisation' },

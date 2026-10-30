@@ -86,8 +86,14 @@ export interface Order {
   status: OrderStatus;
   payment_method: PaymentMethod | null;
   payment_status: PaymentStatus;
-  /** Commission plateforme prélevée sur cette commande (calculée à la confirmation du paiement). */
+  /** Commission plateforme figée à la création de la commande (assiette = produits hors livraison) ; applicable seulement une fois payée. */
   platform_fee: number;
+  /** Passe 1 : `computed` = règle figée à la commande ; `not_configured` = aucune règle approuvée alors ; `legacy` = payée avant le moteur. */
+  commission_status: 'computed' | 'not_configured' | 'legacy';
+  commission_rate_bps: number | null;
+  commission_base: number | null;
+  refunded_amount: number;
+  commission_reversed: number | null;
   /** Montant net dû au producteur (total - commission). `null` tant que le paiement n'est pas confirmé. */
   seller_amount: number | null;
   settlement_status: 'pending' | 'on_hold' | 'settled';

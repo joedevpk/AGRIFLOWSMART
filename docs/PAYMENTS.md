@@ -99,6 +99,7 @@ CINETPAY_SITE_ID=
 CINETPAY_SECRET_KEY=
 CINETPAY_BASE_URL=https://api-checkout.cinetpay.com
 FRONTEND_URL=https://votre-domaine.example
+PAYMENTS_ONLINE_ENABLED=false   # activation explicite (voir docs/CINETPAY-INTEGRATION.md)
 ```
 À définir avec :
 ```bash

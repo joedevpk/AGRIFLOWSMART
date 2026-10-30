@@ -1,3 +1,4 @@
+import { downloadTextFile } from '@/lib/native/files';
 import { supabase } from '@/lib/supabase';
 import { reportError } from '@/lib/logger';
 import { failure, success, type ServiceResult } from '@/services/serviceResult';
@@ -159,14 +160,7 @@ export async function buildDataExport(userId: string, email: string | undefined,
 }
 
 /** Déclenche le téléchargement d'un objet JSON côté navigateur (aucune donnée n'est envoyée à un tiers). */
-export function downloadJson(filename: string, payload: unknown): void {
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+/** Télécharge (Web) ou partage via le système (application native) la copie des données au format JSON. */
+export async function downloadJson(filename: string, payload: unknown): Promise<void> {
+  await downloadTextFile({ filename, mimeType: 'application/json', content: JSON.stringify(payload, null, 2), shareTitle: 'Mes données AgriFlow RDC' });
 }

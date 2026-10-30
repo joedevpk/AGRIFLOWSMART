@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- allowBackup=false : la sauvegarde automatique Google emporterait le stockage de la WebView (session Supabase) vers un autre
+         appareil ou un compte cloud. usesCleartextTraffic=false : aucun trafic HTTP non chiffré. -->
+    <application
+        android:allowBackup="false"
+        android:usesCleartextTraffic="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBarLaunch"
+            android:launchMode="singleTask"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Lien profond : cd.agriflow.rdc://<page>. Seules les pages de la liste blanche de src/lib/native/urls.ts sont ouvertes.
+                 Pour des liens https (App Links) il faut en plus un domaine vérifié + assetlinks.json : voir docs/CAPACITOR-MOBILE.md. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/custom_url_scheme" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+
+    <!-- Permissions : strictement celles qu'utilisent les fonctions de l'application. -->
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Position ponctuelle de la parcelle (bouton « Ma position », jamais en arrière-plan). -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+    <!-- Photos : l'appareil photo du système et le sélecteur de photos Android n'exigent AUCUNE permission (plugin Camera 7, sans enregistrement en galerie). -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+</manifest>

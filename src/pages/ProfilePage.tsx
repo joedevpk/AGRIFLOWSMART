@@ -1,3 +1,5 @@
+import { pickPhotoFiles } from '@/lib/native/camera';
+import { isNativeApp } from '@/lib/native/platform';
 import { ProducerAvailabilityCard } from '@/components/availability/ProducerAvailabilityCard';
 import { useEffect, useRef, useState } from 'react';
 import { Camera, Save, Trash2 } from 'lucide-react';
@@ -35,10 +37,8 @@ export function ProfilePage() {
     }
   }, [profile]);
 
-  const onPickPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = '';
-    if (!file || !user) return;
+  const uploadPhotoFile = async (file: File) => {
+    if (!user) return;
     setUploading(true);
     try {
       const { url } = await uploadAvatar(user.id, file);
@@ -48,6 +48,23 @@ export function ProfilePage() {
       toast('error', err instanceof Error ? err.message : 'La photo n\'a pas pu être envoyée.');
     }
     setUploading(false);
+  };
+
+  const onPickPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (file) await uploadPhotoFile(file);
+  };
+
+  // Application native : appareil photo / galerie via le plugin ; Web : champ fichier (inchangé).
+  const choosePhoto = async () => {
+    if (!isNativeApp()) { fileRef.current?.click(); return; }
+    try {
+      const [file] = await pickPhotoFiles();
+      if (file) await uploadPhotoFile(file);
+    } catch (err) {
+      toast('error', err instanceof Error ? err.message : 'La photo n\'a pas pu être récupérée.');
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -87,7 +104,7 @@ export function ProfilePage() {
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <input ref={fileRef} type="file" accept={ACCEPTED_IMAGE_TYPES.join(',')} className="sr-only" tabIndex={-1} aria-hidden="true" onChange={(e) => void onPickPhoto(e)} />
-                  <Button type="button" variant="outline" size="sm" loading={uploading} onClick={() => fileRef.current?.click()}><Camera className="h-4 w-4" aria-hidden="true" /> Changer la photo</Button>
+                  <Button type="button" variant="outline" size="sm" loading={uploading} onClick={() => void choosePhoto()}><Camera className="h-4 w-4" aria-hidden="true" /> Changer la photo</Button>
                   {avatarUrl && <Button type="button" variant="ghost" size="sm" onClick={() => setAvatarUrl('')}><Trash2 className="h-4 w-4" aria-hidden="true" /> Retirer</Button>}
                 </div>
               </div>

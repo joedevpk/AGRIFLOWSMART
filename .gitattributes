@@ -1,0 +1,24 @@
+# Fins de ligne : indispensable pour les outils natifs quand le dépôt est cloné sous Windows (core.autocrlf).
+* text=auto
+
+# Linux/macOS/Git Bash : un gradlew en CRLF échoue (« bad interpreter »).
+gradlew text eol=lf
+*.sh text eol=lf
+# Windows CMD : un .bat en LF peut échouer (étiquettes de saut introuvables).
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binaires : jamais modifiés par Git.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.jar binary
+*.zip binary
+*.keystore binary
+*.jks binary

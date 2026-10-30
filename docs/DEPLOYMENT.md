@@ -44,7 +44,7 @@ supabase functions deploy order-confirmation-cron
 ```
 La vérification JWT par fonction est réglée dans `supabase/config.toml` (désactivée seulement pour `payment-webhook` et
 `order-confirmation-cron`, qui s'authentifient eux-mêmes : signature HMAC + revérification CinetPay / `x-cron-secret`).
-Secrets : `CINETPAY_API_KEY`, `CINETPAY_SITE_ID`, `CINETPAY_SECRET_KEY`, `CINETPAY_BASE_URL`, `FRONTEND_URL`, `SITE_URL`, `CRON_SECRET`,
+Secrets : `CINETPAY_API_KEY`, `CINETPAY_SITE_ID`, `CINETPAY_SECRET_KEY`, `CINETPAY_BASE_URL`, `PAYMENTS_ONLINE_ENABLED` (activation explicite), `CINETPAY_CARD_ENABLED`, `FRONTEND_URL`, `SITE_URL`, `CRON_SECRET`,
 `RESEND_API_KEY`, `EMAIL_FROM`. **Jamais dans Git, jamais dans `render.yaml`, jamais dans une variable `VITE_*`.**
 `FRONTEND_URL` limite aussi le CORS des fonctions à ce site : obligatoire en production.
 

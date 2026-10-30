@@ -1,5 +1,5 @@
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { Link } from 'react-router-dom';
-import { Leaf } from 'lucide-react';
 import { useLanguage } from '@/contexts/language-context';
 import { HomeHeader } from '@/components/layout/HomeHeader';
 import { openConsentPreferences } from '@/lib/consent';
@@ -21,14 +21,8 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4 lg:grid-cols-6">
           <div className="col-span-2 md:col-span-4 lg:col-span-2">
-            <Link to="/" className="mb-5 inline-flex items-center gap-2.5">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 text-white">
-                <Leaf className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <span className="flex flex-col leading-none">
-                <span className="text-lg font-bold text-white">AgriFlow</span>
-                <span className="text-[10px] font-medium uppercase tracking-wider text-brand-300">RDC</span>
-              </span>
+            <Link to="/" className="group mb-5 inline-flex" aria-label="AgriFlow RDC, accueil">
+              <BrandLogo tone="onDark" size="lg" />
             </Link>
             <p className="max-w-xs text-lg font-semibold leading-snug text-white text-balance">{t('footer.tagline')}</p>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-cream/70">{t('footer.aboutText')}</p>
@@ -60,7 +54,7 @@ export function Footer() {
               <li><Link to="/dashboard" className={col}>{t('nav.dashboard')}</Link></li>
               <li><Link to="/help" className={col}>Centre d'aide</Link></li>
               <li><Link to="/contact" className={col}>Contact</Link></li>
-              <li><Link to="/comment-ca-marche" className={col}>À propos d'AgriFlow</Link></li>
+              <li><Link to="/a-propos" className={col}>À propos d'AgriFlow</Link></li>
             </ul>
           </nav>
           <nav aria-label="Informations et confiance" className="col-span-2 md:col-span-2 lg:col-span-1">

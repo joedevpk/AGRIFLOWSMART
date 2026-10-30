@@ -152,12 +152,33 @@ export function AdminPage() {
     toast('success', value ? 'Compte vérifié.' : 'Vérification retirée.');
   };
 
-  const setRole = async (p: Profile, role: UserRole) => {
-    const { error } = await supabase.from('profiles').update({ role }).eq('user_id', p.user_id);
-    if (error) { toast('error', 'Changement de rôle impossible : ' + error.message); return; }
+  // Passe 2 : le rôle ne se change plus par UPDATE direct. RPC stricte : motif obligatoire, pas d'auto-modification,
+  // dernier administrateur protégé, action journalisée (auteur, motif, avant/après).
+  const roleReasonRef = useRef<HTMLInputElement>(null);
+  const setRole = async (p: Profile, role: UserRole, reason: string) => {
+    const { error } = await supabase.rpc('admin_set_user_role', { p_user_id: p.user_id, p_role: role, p_reason: reason.trim() });
+    if (error) { toast('error', 'Changement de rôle refusé : ' + (error.message.length > 140 ? 'opération non autorisée.' : error.message)); return; }
     setProfiles((list) => list.map((x) => (x.user_id === p.user_id ? { ...x, role } : x)));
-    toast('success', 'Rôle mis à jour.');
+    toast('success', 'Rôle mis à jour et journalisé.');
   };
+  const askRole = (p: Profile, role: UserRole) => request({
+    title: `Changer le rôle de ${p.full_name} en « ${ROLE_LABELS[role] ?? role} » ?`,
+    destructive: role === 'admin' || p.role === 'admin',
+    confirmLabel: 'Changer le rôle',
+    description: (
+      <div className="space-y-3 text-left">
+        <p>Cette action modifie les accès de l'utilisateur. Elle est enregistrée dans le journal avec votre nom et le motif.</p>
+        <label className="block text-sm font-medium text-charcoal">Motif (obligatoire, 3 caractères minimum)
+          <input ref={roleReasonRef} type="text" maxLength={300} autoFocus className="mt-1 h-11 w-full rounded-xl border border-brand-200 bg-offwhite px-3 text-sm" />
+        </label>
+      </div>
+    ),
+    run: async () => {
+      const reason = roleReasonRef.current?.value ?? '';
+      if (reason.trim().length < 3) { toast('error', 'Indiquez un motif (3 caractères minimum).'); return; }
+      await setRole(p, role, reason);
+    },
+  });
 
   const setProductStatus = async (p: Product, status: Product['status']) => {
     const { error } = await supabase.from('products').update({ status }).eq('id', p.id);
@@ -299,7 +320,7 @@ export function AdminPage() {
                           <div className="flex items-center gap-2">
                             <select
                               value={p.role}
-                              onChange={(e) => void setRole(p, e.target.value as UserRole)}
+                              onChange={(e) => askRole(p, e.target.value as UserRole)}
                               aria-label={`Rôle de ${p.full_name}`}
                               className="h-9 rounded-lg border border-brand-200 bg-offwhite px-2 text-sm text-charcoal/80"
                             >

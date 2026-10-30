@@ -117,8 +117,13 @@ export function PrivacySettings() {
     const res = await buildDataExport(user.id, user.email, profile);
     setExporting(false);
     if (!res.ok) { toast('error', res.message); return; }
-    downloadJson(`agriflow-mes-donnees-${new Date().toISOString().slice(0, 10)}.json`, res.data);
-    toast('success', 'Votre copie a été téléchargée sur cet appareil.');
+    try {
+      await downloadJson(`agriflow-mes-donnees-${new Date().toISOString().slice(0, 10)}.json`, res.data);
+    } catch {
+      toast('error', 'Le fichier n\'a pas pu être enregistré sur cet appareil.');
+      return;
+    }
+    toast('success', 'Votre copie est prête (téléchargée ou proposée au partage selon votre appareil).');
   };
 
   const cancelRequest = async () => {

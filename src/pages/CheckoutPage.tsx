@@ -81,6 +81,7 @@ export function CheckoutPage() {
     };
   }, [totals.currency]);
 
+
   // Panier vide (hors commande tout juste passée) : retour au panier.
   useEffect(() => {
     if (ready && count === 0 && !completedRef.current) navigate('/cart', { replace: true });
@@ -112,6 +113,13 @@ export function CheckoutPage() {
   const update = useCallback((patch: Partial<CheckoutDraft>) => {
     setDraft((d) => (d ? { ...d, ...patch } : d));
   }, []);
+
+  // Un moyen mémorisé dans le brouillon qui n'est plus proposable (paiement en ligne non activé…) est retiré : l'acheteur choisit à nouveau.
+  useEffect(() => {
+    if (!draft?.payment_method || paymentOptions.length === 0) return;
+    const chosen = paymentOptions.find((o) => o.id === draft.payment_method);
+    if (chosen && !chosen.selectable) update({ payment_method: null });
+  }, [paymentOptions, draft?.payment_method, update]);
 
   const setField = (field: keyof DeliveryFormData, value: string) => {
     setDraft((d) => (d ? { ...d, delivery: { ...d.delivery, [field]: value } } : d));
@@ -150,6 +158,13 @@ export function CheckoutPage() {
 
   const submit = async () => {
     if (!draft || !draft.payment_method || submittingRef.current) return;
+
+    // Garde finale : jamais de commande avec un moyen en ligne que le serveur n'a pas confirmé (brouillon ancien, statut inconnu…).
+    const chosen = paymentOptions.find((o) => o.id === draft.payment_method);
+    if (!chosen || !chosen.selectable) {
+      setProblem({ message: chosen?.unavailableReason ?? 'Ce moyen de paiement n\'est pas disponible. Choisissez-en un autre.', retryable: false, needsCart: false });
+      return;
+    }
 
     const found = validateDelivery(draft.delivery);
     if (hasErrors(found)) {
@@ -421,6 +436,7 @@ export function CheckoutPage() {
                               <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[11px] font-semibold text-brand-700">{opt.badge}</span>
                             </span>
                             <span className="mt-0.5 block text-sm text-charcoal/55">{opt.description}</span>
+                            {!opt.selectable && opt.unavailableReason && <span role="note" className="mt-1 block text-xs font-medium text-amber-800">{opt.unavailableReason}</span>}
                           </span>
                         </label>
                       );

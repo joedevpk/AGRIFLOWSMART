@@ -1,3 +1,4 @@
+import { openCheckoutPage } from '@/lib/native/browser';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Banknote, Check, Lock, MapPin, MessageSquare, Phone, Star, Truck } from 'lucide-react';
@@ -129,7 +130,13 @@ export function OrderDetailPage() {
       setPayingOnline(false);
       return;
     }
-    window.location.href = result.data.checkoutUrl;
+    try {
+      const opened = await openCheckoutPage({ url: result.data.checkoutUrl, reference: result.data.internalReference, navigate });
+      if (!opened) toast('error', 'L\'adresse de paiement reçue est invalide. Réessayez ou choisissez un autre moyen de paiement.');
+    } catch {
+      toast('error', 'Impossible d\'ouvrir la page de paiement. Aucun montant n\'a été débité. Réessayez.');
+    }
+    setPayingOnline(false);
   };
 
   const handleReview = async () => {

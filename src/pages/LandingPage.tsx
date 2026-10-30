@@ -1,3 +1,5 @@
+import { LatestOffers } from '@/components/home/LatestOffers';
+import { WelcomeStrip } from '@/components/home/WelcomeStrip';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useSeo } from '@/hooks/useSeo';
@@ -101,6 +103,8 @@ export function LandingPage() {
         </div>
       </section>
 
+      <WelcomeStrip />
+
       {/* Search-first experience */}
       <section className="py-14 sm:py-16 bg-brand-900">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
@@ -135,6 +139,8 @@ export function LandingPage() {
           </div>
         </div>
       </section>
+
+      <LatestOffers />
 
       {/* How it works */}
       <section className="py-20 sm:py-28">
@@ -259,7 +265,7 @@ export function LandingPage() {
                   { icon: <PackageCheck className="h-5 w-5" />, label: 'Disponibilité indiquée par le producteur' },
                   { icon: <TrendingUp className="h-5 w-5" />, label: 'Prix transparent' },
                   { icon: <ShoppingCart className="h-5 w-5" />, label: 'Commande directe' },
-                  { icon: <CheckCircle2 className="h-5 w-5" />, label: 'Paiement sécurisé (CinetPay) ou à la livraison' },
+                  { icon: <CheckCircle2 className="h-5 w-5" />, label: 'Paiement à la livraison (paiement en ligne bientôt)' },
                   { icon: <Truck className="h-5 w-5" />, label: 'Suivi de commande et de livraison' },
                 ].map((f) => (
                   <div key={f.label} className="flex items-center gap-3">

@@ -1,5 +1,6 @@
+import { openCheckoutPage } from '@/lib/native/browser';
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { CheckCircle2, Lock, Package } from 'lucide-react';
 import { Header, Footer } from '@/components/layout/Header';
 import { Card, CardBody, EmptyState, buttonStyles, Button } from '@/components/ui';
@@ -23,6 +24,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export function CheckoutConfirmationPage() {
   useSeo({ title: 'Commande enregistrée | AgriFlow RDC', noindex: true });
   const { checkoutId } = useParams<{ checkoutId: string }>();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [orders, setOrders] = useState<OrderWithDetails[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -72,9 +74,15 @@ export function CheckoutConfirmationPage() {
       setPayingOrderId(null);
       return;
     }
-    // Redirection vers la page de paiement hébergée CinetPay : le navigateur
-    // quitte l'application, le retour se fait sur /payment/result/:reference.
-    window.location.href = result.data.checkoutUrl;
+    // Page de paiement hébergée par le prestataire. Web : la page est remplacée ; application native : navigateur intégré.
+    // Dans les deux cas le retour passe par /payment/result/:reference, qui VÉRIFIE le paiement côté serveur.
+    try {
+      const opened = await openCheckoutPage({ url: result.data.checkoutUrl, reference: result.data.internalReference, navigate });
+      if (!opened) toast('error', 'L\'adresse de paiement reçue est invalide. Réessayez ou choisissez un autre moyen de paiement.');
+    } catch {
+      toast('error', 'Impossible d\'ouvrir la page de paiement. Aucun montant n\'a été débité. Réessayez.');
+    }
+    setPayingOrderId(null);
   };
 
   return (

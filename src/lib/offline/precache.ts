@@ -5,6 +5,8 @@
  * Supabase (produits, commandes…) — seules les données Ma Parcelle déjà consultées sont relues depuis le stockage local.
  */
 /** Préfixe des caches du service worker (public/sw.js) ; le nom complet change à chaque build (`agriflow-shell-<empreinte>`). */
+import { isNativeApp } from '@/lib/native/platform';
+
 export const SHELL_CACHE_PREFIX = 'agriflow-shell-';
 
 /** Cache COURANT du service worker : à l'activation, il supprime tous les autres caches au même préfixe → il n'en reste qu'un. */
@@ -14,7 +16,8 @@ export async function currentShellCacheName(): Promise<string | null> {
 }
 
 export function offlineSupported(): boolean {
-  return typeof navigator !== 'undefined' && 'serviceWorker' in navigator && typeof caches !== 'undefined';
+  // Application native : fichiers déjà embarqués, pas de Service Worker (voir lib/native/serviceWorker).
+  return !isNativeApp() && typeof navigator !== 'undefined' && 'serviceWorker' in navigator && typeof caches !== 'undefined';
 }
 
 export async function isOfflineReady(): Promise<boolean> {

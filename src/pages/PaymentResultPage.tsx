@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { CheckCircle2, Clock, Loader2, XCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Clock, Loader2, RotateCcw, XCircle } from 'lucide-react';
 import { Header, Footer } from '@/components/layout/Header';
 import { Card, CardBody, buttonStyles, Button } from '@/components/ui';
 import type { PaymentResultStatus } from '@/services/paymentService';
 import { fetchPaymentByReference, verifyPayment } from '@/services/paymentService';
 import { useSeo } from '@/hooks/useSeo';
 import { useLanguage } from '@/contexts/language-context';
+import { MAX_POLLS, TERMINAL_STATUSES, viewStateFor } from '@/lib/paymentView';
 
 /**
  * Retour depuis la page de paiement hébergée CinetPay (`return_url`). Cette page
@@ -16,17 +17,6 @@ import { useLanguage } from '@/contexts/language-context';
  */
 
 const POLL_INTERVAL_MS = 4000;
-const MAX_POLLS = 15; // ~1 minute de vérification active, sans polling agressif
-
-type ViewState = 'checking' | 'success' | 'failed' | 'pending' | 'cancelled' | 'not_found';
-
-function viewStateFor(status: PaymentResultStatus | null): ViewState {
-  if (!status) return 'checking';
-  if (status === 'paid' || status === 'demo_paid') return 'success';
-  if (status === 'failed' || status === 'expired') return 'failed';
-  if (status === 'cancelled') return 'cancelled';
-  return 'pending'; // pending / processing / refunded (rare ici)
-}
 
 export function PaymentResultPage() {
   useSeo({ title: 'Résultat du paiement | AgriFlow RDC', noindex: true });
@@ -37,15 +27,19 @@ export function PaymentResultPage() {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [pollCount, setPollCount] = useState(0);
+  const [failedChecks, setFailedChecks] = useState(0);
+  const [retryKey, setRetryKey] = useState(0);
   const stoppedRef = useRef(false);
 
   useEffect(() => {
     if (!reference) return;
     stoppedRef.current = false;
     setPollCount(0);
+    setFailedChecks(0);
     setNotFound(false);
 
     let attempt = 0;
+    let failedRounds = 0;
 
     const check = async (forceVerify: boolean) => {
       if (stoppedRef.current) return;
@@ -56,6 +50,9 @@ export function PaymentResultPage() {
       }
 
       const record = await fetchPaymentByReference(reference);
+      // Un tour est « en échec » si la lecture de l'état a échoué (serveur injoignable) : ce n'est PAS une attente de l'opérateur.
+      failedRounds = record.ok ? 0 : failedRounds + 1;
+      setFailedChecks(failedRounds);
       if (record.ok) {
         if (!record.data) {
           setNotFound(true);
@@ -64,7 +61,7 @@ export function PaymentResultPage() {
         }
         setStatus(record.data.status);
         setOrderId(record.data.order_id);
-        if (['paid', 'failed', 'cancelled', 'expired', 'refunded', 'demo_paid'].includes(record.data.status)) {
+        if (TERMINAL_STATUSES.includes(record.data.status)) {
           stoppedRef.current = true;
           return;
         }
@@ -83,9 +80,9 @@ export function PaymentResultPage() {
     return () => {
       stoppedRef.current = true;
     };
-  }, [reference]);
+  }, [reference, retryKey]);
 
-  const view = notFound ? 'not_found' : viewStateFor(status);
+  const view = viewStateFor({ status, notFound, failedChecks });
   const stillWaiting = view === 'pending' && pollCount >= MAX_POLLS;
 
   return (
@@ -153,6 +150,34 @@ export function PaymentResultPage() {
                 <XCircle className="h-10 w-10 text-charcoal/40" aria-hidden="true" />
                 <h1 className="text-xl font-bold text-charcoal">Paiement annulé</h1>
                 <p className="text-sm text-charcoal/60">Vous avez annulé le paiement. Vous pouvez réessayer à tout moment.</p>
+              </>
+            )}
+
+            {view === 'refunded' && (
+              <>
+                <RotateCcw className="h-10 w-10 text-charcoal/50" aria-hidden="true" />
+                <h1 className="text-xl font-bold text-charcoal">Paiement remboursé</h1>
+                <p className="text-sm text-charcoal/60">Ce paiement a été remboursé. Le délai de réception dépend de votre opérateur.</p>
+              </>
+            )}
+
+            {view === 'demo' && (
+              <>
+                <AlertTriangle className="h-10 w-10 text-amber-500" aria-hidden="true" />
+                <h1 className="text-xl font-bold text-charcoal">Paiement de démonstration</h1>
+                <p className="text-sm text-charcoal/60">Ce paiement a été simulé : aucun argent réel n'a été débité et il ne confirme pas la commande.</p>
+              </>
+            )}
+
+            {view === 'error' && (
+              <>
+                <AlertTriangle className="h-10 w-10 text-amber-500" aria-hidden="true" />
+                <h1 className="text-xl font-bold text-charcoal">Erreur technique temporaire</h1>
+                <p className="text-sm text-charcoal/60">
+                  Nous ne parvenons pas à joindre le serveur pour vérifier votre paiement. Cela ne signifie pas qu'il a échoué.
+                  <strong> Ne payez pas une seconde fois</strong> avant d'avoir vérifié l'état de votre commande.
+                </p>
+                <Button variant="outline" onClick={() => setRetryKey((k) => k + 1)}>Réessayer la vérification</Button>
               </>
             )}
 

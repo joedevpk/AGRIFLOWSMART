@@ -40,8 +40,8 @@ const sections: LegalSectionDef[] = [
     id: 'producteur', title: 'Utilisateur producteur',
     content: (<>
       <p>Le producteur publie ses offres, gère son stock, confirme, prépare et livre les commandes reçues, et met à jour leur statut. Il s'engage à honorer les commandes qu'il confirme.</p>
-      <p>Il peut refuser une commande en attente, et l'annuler tant qu'elle n'est pas prête. Une commission de la plateforme et un montant net sont calculés pour chaque commande ; le versement au producteur est aujourd'hui un processus manuel, non automatique.</p>
-      <Configure><p>Taux et modalités de la commission d'AgriFlow, calendrier et mode de versement au producteur : à définir et à communiquer avant production. La valeur par défaut présente dans la configuration technique est provisoire.</p></Configure>
+      <p>Il peut refuser une commande en attente, et l'annuler tant qu'elle n'est pas prête. Lorsqu'une règle de commission a été validée par la plateforme, une commission et un montant net sont calculés pour chaque commande avec la règle en vigueur au moment de la commande ; le versement au producteur est aujourd'hui un processus manuel, non automatique.</p>
+      <Configure><p>Taux et modalités de la commission d'AgriFlow, calendrier et mode de versement au producteur : à définir et à communiquer avant production. Aucun taux n'est appliqué tant qu'il n'a pas été validé et approuvé par l'administration.</p></Configure>
     </>),
   },
   {

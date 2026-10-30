@@ -1,3 +1,4 @@
+import { registerServiceWorker } from '@/lib/native/serviceWorker';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
@@ -22,9 +23,5 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>
 );
 
-// Mode faible connexion : service worker (production uniquement, pour ne pas gêner le développement).
-if (ENV_STATUS.ok && import.meta.env.PROD && 'serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => { /* le site fonctionne normalement sans service worker */ });
-  });
-}
+// Mode faible connexion (Web, production). Dans l'application native le Service Worker n'est pas enregistré (voir lib/native/serviceWorker).
+if (ENV_STATUS.ok) registerServiceWorker();

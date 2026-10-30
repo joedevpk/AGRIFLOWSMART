@@ -1,3 +1,5 @@
+import { ResetPasswordPage } from '@/pages/auth/ResetPasswordPage';
+import { NativeBridge } from '@/components/system/NativeBridge';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { lazy, Suspense, useEffect, type ReactNode } from 'react';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -15,6 +17,7 @@ import { LandingPage } from '@/pages/LandingPage';
 import { MarketplacePage } from '@/pages/MarketplacePage';
 import { ProductDetailPage } from '@/pages/ProductDetailPage';
 import { HowItWorksPage } from '@/pages/HowItWorksPage';
+import { AboutPage } from '@/pages/AboutPage';
 import { ProducersPage } from '@/pages/ProducersPage';
 import { BuyersPage } from '@/pages/BuyersPage';
 import { ProducerProfilePage } from '@/pages/ProducerProfilePage';
@@ -42,6 +45,8 @@ import { ProfilePage } from '@/pages/ProfilePage';
 import { PaymentsPage } from '@/pages/PaymentsPage';
 import { DeliveriesPage } from '@/pages/DeliveriesPage';
 import { AdminPage } from '@/pages/AdminPage';
+import { AdminCommissionsPage } from '@/pages/admin/AdminCommissionsPage';
+import { AdminFinancePage } from '@/pages/admin/AdminFinancePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProducerSalesPage } from '@/pages/dashboard/ProducerSalesPage';
 import { CooperativesPage } from '@/pages/institutional/CooperativesPage';
@@ -108,6 +113,7 @@ function AppRoutes() {
       <Route path="/checkout/confirmation/:checkoutId" element={<ProtectedRoute><CheckoutConfirmationPage /></ProtectedRoute>} />
       <Route path="/payment/result/:reference" element={<ProtectedRoute><PaymentResultPage /></ProtectedRoute>} />
       <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
+      <Route path="/a-propos" element={<AboutPage />} />
       <Route path="/how-it-works" element={<Navigate to="/comment-ca-marche" replace />} />
       <Route path="/cooperatives" element={<CooperativesPage />} />
       <Route path="/entreprises" element={<EnterprisesPage />} />
@@ -127,6 +133,7 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
 
       <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
       <Route path="/producer/products" element={<SellerRoute><ProducerProductsPage /></SellerRoute>} />
@@ -149,6 +156,8 @@ function AppRoutes() {
       <Route path="/payments" element={<ProtectedRoute><PaymentsPage /></ProtectedRoute>} />
       <Route path="/deliveries" element={<ProtectedRoute><DeliveriesPage /></ProtectedRoute>} />
       <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+      <Route path="/admin/commissions" element={<AdminRoute><AdminCommissionsPage /></AdminRoute>} />
+      <Route path="/admin/finance" element={<AdminRoute><AdminFinancePage /></AdminRoute>} />
 
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
@@ -168,6 +177,7 @@ function AppShell() {
       <ConsentManager />
       {/* Défilement central : haut de page à chaque nouvelle route, restauration sur Précédent/Suivant, ancres. */}
       <ScrollManager />
+      <NativeBridge />
       {/* resetKey : une nouvelle route efface l'erreur affichée par la page précédente. */}
       <ErrorBoundary resetKey={location.pathname}>
         <Suspense fallback={<LoadingState />}>

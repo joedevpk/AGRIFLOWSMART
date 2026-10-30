@@ -72,7 +72,8 @@ expect "un seul événement de paiement traité" "$(Q -c "select count(*) from p
 expect "une seule notification « à confirmer » pour le producteur" "$(Q -c "select count(*) from notifications where type='order_to_confirm' and link='/orders/$MID'")" "1"
 expect "une seule notification « paiement confirmé » par destinataire (2)" "$(Q -c "select count(*) from notifications where type='payment_confirmed' and link='/orders/$MID'")" "2"
 expect "commande payée mais PAS confirmée automatiquement" "$(Q -c "select payment_status||'/'||status from orders where id='$MID'")" "paid/pending"
-expect "commission calculée une seule fois" "$(Q -c "select (platform_fee > 0 and platform_fee = round(total_amount * 5 / 100, 2))::text from orders where id='$MID'")" "true"
+expect "passe 1 : sans règle approuvée, aucune commission inventée (not_configured, net NULL, on_hold)" "$(Q -c "select (commission_status='not_configured' and platform_fee=0 and seller_amount is null and settlement_status='on_hold')::text from orders where id='$MID'")" "true"
+expect "passe 1 : un seul événement comptable payment_confirmed malgré deux webhooks" "$(Q -c "select count(*) from financial_events where order_id='$MID' and event_type='payment_confirmed'")" "1"
 expect "un des deux appels est signalé comme doublon" "$(cat /tmp/conc_wh_*.txt | grep -c 'duplicate')" "1"
 
 echo "== 5. Deux passages du cron d'expiration en parallèle =="

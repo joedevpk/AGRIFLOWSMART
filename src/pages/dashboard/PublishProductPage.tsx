@@ -1,3 +1,5 @@
+import { pickPhotoFiles } from '@/lib/native/camera';
+import { isNativeApp } from '@/lib/native/platform';
 import { PRODUCT_DETAIL_COLUMNS } from '@/lib/columns';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -167,7 +169,7 @@ export function PublishProductPage() {
     return Object.keys(e).length === 0;
   };
 
-  const handleFiles = async (files: FileList | null) => {
+  const handleFiles = async (files: FileList | File[] | null) => {
     if (!files || !user) return;
     const room = MAX_PRODUCT_PHOTOS - photos.length;
     if (room <= 0) { toast('error', `${MAX_PRODUCT_PHOTOS} photos maximum.`); return; }
@@ -183,6 +185,17 @@ export function PublishProductPage() {
     setPhotos((prev) => [...prev, ...ok]);
     setUploading((n) => n - selected.length);
     if (fileRef.current) fileRef.current.value = '';
+  };
+
+  // Application native : appareil photo / galerie via le plugin (une photo à la fois) ; Web : champ fichier (inchangé).
+  const choosePhotos = async () => {
+    if (!isNativeApp()) { fileRef.current?.click(); return; }
+    try {
+      const files = await pickPhotoFiles();
+      if (files.length > 0) await handleFiles(files);
+    } catch (err) {
+      toast('error', err instanceof Error ? err.message : 'La photo n\'a pas pu être récupérée.');
+    }
   };
 
   const removePhoto = (idx: number) => {
@@ -389,7 +402,7 @@ export function PublishProductPage() {
                         </div>
                       ))}
                       {photos.length + uploading < MAX_PRODUCT_PHOTOS && (
-                        <button type="button" onClick={() => fileRef.current?.click()} className="flex h-24 w-24 flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-black/15 text-charcoal/40 transition-colors hover:border-brand-400 hover:text-brand-600">
+                        <button type="button" onClick={() => void choosePhotos()} className="flex h-24 w-24 flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-black/15 text-charcoal/40 transition-colors hover:border-brand-400 hover:text-brand-600">
                           <ImagePlus className="h-6 w-6" /><span className="text-[11px] font-medium">Ajouter</span>
                         </button>
                       )}

@@ -1,4 +1,5 @@
 import { PAYMENT_RESULT_COLUMNS } from '@/lib/columns';
+import { applyAvailability, parseAvailability, UNKNOWN_AVAILABILITY, ONLINE_NOT_ACTIVATED_MESSAGE, type PaymentAvailability } from '@/lib/paymentAvailability';
 import { supabase } from '@/lib/supabase';
 import { reportError } from '@/lib/logger';
 import type { Payment, PaymentMethod } from '@/types';
@@ -26,9 +27,14 @@ export interface PaymentMethodOption {
   description: string;
   mode: PaymentMode;
   badge: string;
-  /** Peut être choisi par l'acheteur (dépend de la configuration admin CinetPay). */
+  /** Peut être choisi par l'acheteur (configuration admin ET activation serveur du paiement en ligne). */
   selectable: boolean;
+  /** Pourquoi le moyen n'est pas proposable (affiché à l'acheteur) — jamais de faux bouton fonctionnel. */
+  unavailableReason?: string;
 }
+
+export { applyAvailability, parseAvailability, ONLINE_NOT_ACTIVATED_MESSAGE, ONLINE_STATUS_UNKNOWN_MESSAGE, CARD_UNAVAILABLE_MESSAGE } from '@/lib/paymentAvailability';
+export type { PaymentAvailability, PaymentAvailabilityState } from '@/lib/paymentAvailability';
 
 const STATIC_METHOD_META: Record<PaymentMethod, Omit<PaymentMethodOption, 'selectable'>> = {
   mobile_money: {
@@ -64,6 +70,14 @@ const FALLBACK_ENABLED: PaymentMethod[] = ['cash_on_delivery'];
  * dans ce fichier : c'est la configuration serveur qui décide.
  */
 export async function fetchPaymentMethodOptions(currency: string | null): Promise<PaymentMethodOption[]> {
+  // Deux sources indépendantes : la configuration admin (table `payment_settings`) ET l'activation réelle côté serveur
+  // (secrets du prestataire + interrupteur explicite, via l'Edge Function `payment-status`). Un moyen en ligne n'est
+  // proposable que si LES DEUX l'autorisent.
+  const [availability, configured] = await Promise.all([fetchPaymentAvailability(), fetchConfiguredOptions(currency)]);
+  return applyAvailability(configured, availability);
+}
+
+async function fetchConfiguredOptions(currency: string | null): Promise<PaymentMethodOption[]> {
   try {
     const { data, error } = await supabase.rpc('get_payment_methods');
     if (error || !data) {
@@ -76,6 +90,21 @@ export async function fetchPaymentMethodOptions(currency: string | null): Promis
   } catch (err) {
     reportError('paymentService.fetchPaymentMethodOptions', err);
     return buildOptions(FALLBACK_ENABLED, {}, currency);
+  }
+}
+
+/** État d'activation du paiement en ligne (Edge Function `payment-status`). En cas d'échec : `unknown` → rien n'est proposé en ligne. */
+export async function fetchPaymentAvailability(): Promise<PaymentAvailability> {
+  try {
+    const { data, error } = await supabase.functions.invoke('payment-status', { body: {} });
+    if (error) {
+      reportError('paymentService.fetchPaymentAvailability', error.message);
+      return UNKNOWN_AVAILABILITY;
+    }
+    return parseAvailability(data);
+  } catch (err) {
+    reportError('paymentService.fetchPaymentAvailability', err);
+    return UNKNOWN_AVAILABILITY;
   }
 }
 
@@ -121,6 +150,9 @@ const PAYMENT_ERROR_MESSAGES: Record<string, string> = {
   CURRENCY_UNAVAILABLE: 'Ce moyen de paiement n\'est pas disponible pour la devise de cette commande.',
   PROVIDER_ERROR: 'Le paiement n\'a pas pu être initié. Vous pouvez réessayer.',
   CONFIG_MISSING: 'Le paiement en ligne n\'est pas disponible pour le moment. Réessayez plus tard.',
+  PAYMENTS_NOT_ACTIVATED: ONLINE_NOT_ACTIVATED_MESSAGE,
+  AMOUNT_NOT_SUPPORTED: 'Ce montant ne peut pas être réglé en ligne (le prestataire exige un montant entier, multiple de 5 pour le franc congolais). Choisissez le paiement à la livraison.',
+  PROVIDER_UNAVAILABLE: 'Le service de paiement ne répond pas pour le moment. Aucun montant n\'a été débité. Réessayez dans quelques minutes.',
   UNAVAILABLE: 'Service momentanément indisponible. Réessayez.',
 };
 

@@ -25,7 +25,7 @@ export const ADMIN_PRODUCT_COLUMNS = 'id, user_id, name, category, quantity, uni
 export const ADMIN_ORDER_COLUMNS = 'id, order_number, buyer_id, producer_id, product_id, quantity, unit, total_amount, currency, status, payment_method, payment_status, created_at, updated_at';
 export const ADMIN_PROFILE_COLUMNS = 'id, user_id, role, buyer_type, full_name, province, city, bio, avatar_url, is_verified, created_at, updated_at';
 
-const ORDER_COLUMNS = 'id, order_number, checkout_id, buyer_id, producer_id, product_id, quantity, unit, subtotal, delivery_fee, platform_fee, seller_amount, total_amount, currency, status, payment_method, payment_status, settlement_status, delivery_address, delivery_city, notes, confirmation_deadline, confirmed_at, expired_at, cancel_reason, created_at, updated_at';
+const ORDER_COLUMNS = 'id, order_number, checkout_id, buyer_id, producer_id, product_id, quantity, unit, subtotal, delivery_fee, platform_fee, commission_status, commission_rate_bps, commission_base, refunded_amount, commission_reversed, seller_amount, total_amount, currency, status, payment_method, payment_status, settlement_status, delivery_address, delivery_city, notes, confirmation_deadline, confirmed_at, expired_at, cancel_reason, created_at, updated_at';
 const ORDER_ITEM_COLUMNS = 'id, order_id, product_id, producer_id, product_name, product_image, unit, unit_price, quantity, subtotal, currency, created_at';
 const DELIVERY_COLUMNS = 'id, order_id, status, transport_type, distance_km, estimated_date, notes, recipient_name, recipient_phone, address, city, commune, delivered_at, created_at, updated_at';
 /** Paiements d'une commande : jamais `metadata` ni `idempotency_key` (techniques, inutiles à l'écran). */

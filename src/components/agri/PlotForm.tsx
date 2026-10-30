@@ -1,3 +1,4 @@
+import { GeoError, getCurrentCoordinates } from '@/lib/native/geolocation';
 import { useState } from 'react';
 import { LocateFixed, ExternalLink } from 'lucide-react';
 import { Input, Select, Textarea, Button } from '@/components/ui';
@@ -35,15 +36,21 @@ export function PlotForm({ userId, initial, onSave, onCancel }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [locating, setLocating] = useState(false);
 
-  const locate = () => {
-    if (!('geolocation' in navigator)) { toast('error', 'La localisation n\'est pas disponible sur cet appareil. Saisissez la zone à la main.'); return; }
+  const locate = async () => {
     setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => { setLat(pos.coords.latitude.toFixed(6)); setLng(pos.coords.longitude.toFixed(6)); setLocating(false); toast('success', 'Position enregistrée sur cet appareil.'); },
-      () => { setLocating(false); toast('error', 'Position introuvable. Vous pouvez saisir la zone manuellement.'); },
-      { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 },
-    );
+    try {
+      const pos = await getCurrentCoordinates();
+      setLat(pos.latitude.toFixed(6)); setLng(pos.longitude.toFixed(6));
+      toast('success', 'Position enregistrée sur cet appareil. Vous pouvez la corriger avant de sauvegarder.');
+    } catch (err) {
+      const code = err instanceof GeoError ? err.code : 'failed';
+      toast('error', code === 'denied' ? 'Autorisation de localisation refusée. Activez-la dans les réglages du téléphone ou saisissez la zone à la main.'
+        : code === 'unavailable' ? 'La localisation n\'est pas disponible sur cet appareil. Saisissez la zone à la main.'
+        : 'Position introuvable. Vous pouvez saisir la zone manuellement.');
+    }
+    setLocating(false);
   };
+
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,7 +92,7 @@ export function PlotForm({ userId, initial, onSave, onCancel }: Props) {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_1fr_auto] sm:items-end">
           <Input label="Latitude" inputMode="decimal" value={lat} onChange={(e) => setLat(e.target.value)} placeholder="-4.325" />
           <Input label="Longitude" inputMode="decimal" value={lng} onChange={(e) => setLng(e.target.value)} placeholder="15.322" />
-          <Button type="button" variant="outline" onClick={locate} loading={locating}><LocateFixed className="h-4 w-4" /> Ma position</Button>
+          <Button type="button" variant="outline" onClick={() => void locate()} loading={locating}><LocateFixed className="h-4 w-4" /> Ma position</Button>
         </div>
         {errors.geo && <p className="text-xs text-rose-600">{errors.geo}</p>}
         <p className="text-xs text-charcoal/55">La position est lue par votre appareil (GPS) et fonctionne sans internet. Aucune carte n'est chargée dans l'application.{hasGeo && <> <a className="inline-flex items-center gap-1 font-medium text-brand-700 underline" href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`} target="_blank" rel="noopener noreferrer">Voir sur OpenStreetMap <ExternalLink className="h-3 w-3" /></a></>}</p>

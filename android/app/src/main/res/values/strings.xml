@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AgriFlow RDC</string>
+    <string name="title_activity_main">AgriFlow RDC</string>
+    <string name="package_name">cd.agriflow.rdc</string>
+    <string name="custom_url_scheme">cd.agriflow.rdc</string>
+</resources>

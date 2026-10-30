@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   LayoutDashboard, Package, Store, ShoppingBag, Inbox, MessageSquare, CreditCard, Truck, Bell,
-  User, MapPin, BookOpen, CalendarDays, Sparkles, ShoppingCart, LineChart, LifeBuoy, Mail, Heart, ShieldCheck,
+  User, MapPin, BookOpen, CalendarDays, Sparkles, ShoppingCart, LineChart, LifeBuoy, Mail, Heart, ShieldCheck, Percent, Landmark,
 } from 'lucide-react';
 import type { UserRole } from '@/types';
 
@@ -98,7 +98,7 @@ export const BUYER_NAV: NavSection[] = [
 ];
 
 export const ADMIN_NAV: NavSection[] = [
-  { title: 'Administration', items: [{ label: 'Administration', path: '/admin', icon: ShieldCheck }] },
+  { title: 'Administration', items: [{ label: 'Administration', path: '/admin', icon: ShieldCheck }, { label: 'Finance', path: '/admin/finance', icon: Landmark }, { label: 'Commissions', path: '/admin/commissions', icon: Percent }] },
   ...PRODUCER_NAV,
 ];
 

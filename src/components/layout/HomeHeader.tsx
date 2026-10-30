@@ -1,6 +1,7 @@
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowRight, Bell, Leaf, LayoutDashboard, LogOut, Menu, Search, ShoppingCart, Sprout, X } from 'lucide-react';
+import { ArrowRight, Bell, LayoutDashboard, LogOut, Menu, Search, ShoppingCart, Sprout, X } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { useCart } from '@/contexts/cart-context';
 import { useLanguage } from '@/contexts/language-context';
@@ -152,15 +153,8 @@ export function HomeHeader({ variant = 'overlay' }: HomeHeaderProps = {}) {
           )}
         />
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:h-[72px] lg:px-8">
-          <Link to="/" onClick={closeAll} className="group flex shrink-0 items-center gap-2.5" aria-label="AgriFlow RDC, accueil">
-            <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-offwhite text-brand-700 shadow-sm transition-transform group-hover:scale-105">
-              <Leaf className="h-5 w-5" aria-hidden="true" />
-              <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-accent-400 ring-2 ring-brand-900" />
-            </span>
-            <span className="flex flex-col leading-none">
-              <span className="text-lg font-bold tracking-tight text-white">AgriFlow</span>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-accent-300">RDC</span>
-            </span>
+          <Link to="/" onClick={closeAll} className="group flex shrink-0 items-center" aria-label="AgriFlow RDC, accueil">
+            <BrandLogo tone="onDark" size="md" />
           </Link>
 
           <nav className="hidden items-center gap-0.5 xl:flex" aria-label="Navigation principale">

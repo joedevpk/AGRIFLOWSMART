@@ -1,6 +1,7 @@
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Leaf, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { PAGE_IMAGES } from '@/lib/image-config';
 import { useSeo } from '@/hooks/useSeo';
 
@@ -13,22 +14,15 @@ export function AuthLayout({ children, title, subtitle }: { children: ReactNode;
       <div className="relative h-32 shrink-0 overflow-hidden sm:h-40 lg:hidden">
         <img src={image.url} alt={image.alt} loading="eager" className="absolute inset-0 h-full w-full object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-t from-brand-950/85 via-brand-900/40 to-brand-900/20" />
-        <Link to="/" className="absolute bottom-3 left-4 flex items-center gap-2 text-white">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600"><Leaf className="h-4 w-4" aria-hidden="true" /></span>
-          <span className="text-base font-bold">AgriFlow <span className="text-brand-200">RDC</span></span>
+        <Link to="/" className="group absolute bottom-3 left-4 flex items-center" aria-label="AgriFlow RDC, accueil">
+          <BrandLogo tone="onDark" size="sm" />
         </Link>
       </div>
 
       {/* Formulaire */}
       <div className="flex flex-1 flex-col px-4 py-8 sm:px-6 lg:px-12">
-        <Link to="/" className="group mb-12 hidden items-center gap-2.5 lg:flex">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-white transition-transform duration-200 group-hover:scale-105">
-            <Leaf className="h-5 w-5" aria-hidden="true" />
-          </span>
-          <span className="flex flex-col leading-none">
-            <span className="text-lg font-bold text-charcoal dark:text-cream">AgriFlow</span>
-            <span className="text-[10px] font-medium uppercase tracking-wider text-brand-600 dark:text-brand-300">RDC</span>
-          </span>
+        <Link to="/" className="group mb-12 hidden lg:inline-flex" aria-label="AgriFlow RDC, accueil">
+          <BrandLogo tone="adaptive" size="md" />
         </Link>
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
           <Link to="/" className="mb-6 inline-flex min-h-[44px] items-center gap-1.5 text-sm text-charcoal/55 transition-colors duration-200 hover:text-brand-700 dark:text-cream/55 dark:hover:text-brand-200">

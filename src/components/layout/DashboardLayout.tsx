@@ -1,6 +1,7 @@
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { Leaf, Menu, X, LogOut, Home, Bell } from 'lucide-react';
+import { Menu, X, LogOut, Home, Bell } from 'lucide-react';
 import { ConnectionBadge, SyncPill } from '@/components/agri/SyncStatus';
 import { useAuth } from '@/contexts/auth-context';
 import { Avatar } from '@/components/ui/Avatar';
@@ -12,14 +13,8 @@ import { useSeo } from '@/hooks/useSeo';
 
 function Brand({ onClick }: { onClick?: () => void }) {
   return (
-    <Link to="/" onClick={onClick} className="flex items-center gap-2.5 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
-      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-800 text-white">
-        <Leaf className="h-5 w-5" aria-hidden="true" />
-      </span>
-      <span className="flex flex-col leading-none">
-        <span className="text-lg font-bold text-charcoal">AgriFlow</span>
-        <span className="text-[10px] font-medium uppercase tracking-wider text-brand-600">RDC</span>
-      </span>
+    <Link to="/" onClick={onClick} className="group inline-flex rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" aria-label="AgriFlow RDC, accueil">
+      <BrandLogo tone="onLight" size="md" />
     </Link>
   );
 }

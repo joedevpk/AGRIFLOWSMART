@@ -61,6 +61,9 @@ verify_jwt = true
 [functions.payment-verify]
 verify_jwt = true
 
+[functions.payment-status]
+verify_jwt = true
+
 [functions.payment-refund]
 verify_jwt = true
 
